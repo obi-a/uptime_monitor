@@ -17,8 +17,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "uptime_monitor"
   gem.homepage = "http://github.com/obi-a/uptime_monitor"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{Website uptime monitor plugin for Ragios}
+  gem.description = %Q{Website uptime monitor plugin for Ragios}
   gem.email = "obioraakubue@yahoo.com"
   gem.authors = ["obi-a"]
   # dependencies defined in Gemfile
@@ -39,6 +39,14 @@ Rcov::RcovTask.new do |test|
   test.verbose = true
   test.rcov_opts << '--exclude "gems/*"'
 end
+
+task :repl do
+  uptime_monitor_file = File.expand_path(File.join(File.dirname(__FILE__), '..', 'uptime_monitor/lib/uptime_monitor'))
+  irb = "bundle exec pry -r #{uptime_monitor_file}"
+  sh irb
+end
+
+task :r => :repl
 
 task :default => :test
 
