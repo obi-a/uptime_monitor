@@ -11,11 +11,11 @@ Website uptime monitor plugin for Ragios
                every: "5m",
                contact: "admin@mail.com",
                via: "email_notifier",
-               plugin: "uptime_monitor"
+               plugin: "uptime_monitor",
                exists?: [ [div: {id:"test", class: "test-section"}, text: "this is a test" ], 
                           link: {class: "main-link"},
                           element: {css: "#submit-button"}
-                        ]
+                        ],
                title?: "Welcome to my site"
             }
 
