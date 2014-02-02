@@ -26,19 +26,16 @@ module Ragios
       end
 
       def test_page_title(browser_title, monitor_title)
-        if equal(browser_title, monitor_title)
-          result = {}
-        else
-          result = {expected_page_title: monitor_title, got: browser_title}
-        end
+        return {} if equal(browser_title, monitor_title)
+        return {expected_page_title: monitor_title, got: browser_title}
       end
 
       def browser(browser)
       end
 
       def test_page_title_state_transition(browser_title, monitor_title)
-        return :passed  if equal(browser_title, monitor_title)
-        return :failed unless equal(browser_title, monitor_title)
+        return :passed if equal(browser_title, monitor_title)
+        return :failed
       end
 
     private
