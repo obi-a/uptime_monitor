@@ -25,5 +25,22 @@ Using a real web browser, this plugin checks a webpage at the specified time int
  ragios.add [monitor]
 </pre>
 
-Supported browsers:
+###Supported browsers:
 firefox, chrome, safari, phantomjs
+
+### Browser Format:
+<pre lang="ruby">
+browser: ["firefox", headless: true]
+browser: ["firefox", headless: false]
+browser: ["firefox"]
+browser: ["chrome"]
+</pre>
+Running a browser headless requires xvfb installed.
+
+### Page title test Format:
+<pre lang="ruby">
+title?: [text: "Welcome to my site"]
+title?: [includes_text: "to my site"]
+</pre>
+1. verifies that page title is the same with provided text
+2. verifies that page title contains provided substring
