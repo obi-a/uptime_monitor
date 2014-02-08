@@ -13,10 +13,53 @@ module Ragios
 
       def test_command?
         @test_result = {}
+        state = :pending
         browser = browser(@monitor.browser)
         browser.goto @monitor.url
-        @test_result.merge! test_page_title(browser.title, @monitor.title?) if @monitor.title?
-        @state = test_page_title_state_transition(browser.title, @monitor.title?)
+        title_hash = title_reader(@monitor.title?)
+        if title?(title_hash, browser.title) == false
+          state = :failed
+          result = failed_title_message(title_hash, browser.title)
+          @test_result.merge!(result)
+        end
+        return false if state == :failed
+      end
+
+      #hash format
+      #{text: "Welcome to my site"}
+      #{includes_text: "to my site"}
+      def failed_title_message(hash, browser_title)
+        if hash[:text]
+          {expected_page_title: hash[:text], got: browser_title}
+        elsif hash[:includes_text]
+          {expected_page_title_to_include: hash[:includes_text], got: browser_title}
+        else
+          {}
+        end
+      end
+
+      #title format
+      #[text: "Welcome to my site"]
+      #[includes_text: "to my site"]
+      def title_reader(title)
+        #add custom exception later
+        raise "Invalid title" unless title.class == Array
+        raise "Invalid title" unless title.first.class == Hash
+        return title.first
+      end
+
+      #hash format
+      #{text: "Welcome to my site"}
+      #{includes_text: "to my site"}
+      #title evaluator:
+      def title?(hash, browser_title)
+        if hash[:text]
+          hash[:text] == browser_title
+        elsif hash[:includes_text]
+          browser_title.include? hash[:includes_text]
+        else
+          raise "Could not evaluate title"
+        end
       end
 
       def exists(element)
@@ -25,24 +68,9 @@ module Ragios
       def exists?(element)
       end
 
-      def test_page_title(browser_title, monitor_title)
-        return {} if equal(browser_title, monitor_title)
-        return {expected_page_title: monitor_title, got: browser_title}
-      end
-
       def browser(browser)
       end
 
-      def test_page_title_state_transition(browser_title, monitor_title)
-        return :passed if equal(browser_title, monitor_title)
-        return :failed
-      end
-
-    private
-
-      def equal(right, left)
-        right == left
-      end
     end
   end
 end
