@@ -1,3 +1,4 @@
+#rewite later
 module Ragios
   module Plugin
     class UptimeMonitor
@@ -17,20 +18,43 @@ module Ragios
         @state = :pending
         browser_name = browser(@monitor.browser)
         headless = start_headless if @headless
-        browser = goto(@monitor.url, browser_name)
-        verify_correct_page_title(@monitor.title?, browser.title)
-        browser.close
+        @browser = goto(@monitor.url, browser_name)
+        verify_correct_page_title(@monitor.title?, browser.title) if @monitor.title?
+        parse_page_elements(@monitor.exists?) if @monitor.exists?
+        @browser.close
         headless.destroy if @headless
         @state == :failed ? false : true
       end
 
       def verify_correct_page_title(monitor_title, browser_title)
-        if monitor_title
-          title_hash = title_reader(monitor_title)
-          @state = (title?(title_hash, browser_title) == false) ? :failed : :passed
-          result = title_result(title_hash, browser_title)
+          title_hash = text_reader(monitor_title)
+          @state = (text?(title_hash, browser_title) == false) ? :failed : :passed
+          result = text_result(title_hash, browser_title)
           @test_result.merge!(result)
+      end
+
+      #browser
+      #["firefox", headless: true]
+      #["firefox", headless: false]
+      #["firefox"]
+      def browser_reader(browser)
+        error_message = "Invalid Browser in #{browser.inspect}"
+        raise error_message unless browser.is_a? Array
+        raise error_message unless browser.first.is_a? String
+        if browser.length > 1
+          raise error_message unless browser[1].is_a? Hash
+          raise error_message unless [TrueClass, FalseClass].include? browser[1][:headless].class
         end
+        return browser
+      end
+
+      #browser
+      #["firefox", headless: true]
+      #["firefox", headless: false]
+      #["firefox"]
+      def browser(browser)
+        @headless = browser[1][:headless] if browser[1]
+        browser.first
       end
 
       def goto(url, browser_name)
@@ -45,11 +69,93 @@ module Ragios
         return headless
       end
 
+      def parse_page_elements(page_elements)
+        page_elements = exists_reader(page_elements)
+        page_elements.each do |page_element|
+          verify_correct_page_element(page_element)
+        end
+      end
 
-      #hash format
+      #page_element_array
+      #[div: {id:"test", class: "test-section"}, text: "this is a test"]
+      #page_element_hash
+      #div: {id:"test", class: "test-section"}
+      def verify_correct_page_element(page_element_array)
+        page_element_hash = page_element_reader(page_element_array.first)
+        page_element_exists = page_element_exists?(page_element_hash)
+        @state = page_element_exists ? :passed : :falied
+        result = page_element_exists_result(page_element_hash, @state)
+        @test_result.merge!(result)
+        verify_correct_page_element_text(page_element_array)
+      end
+
+      def verify_correct_page_element_text(page_element_array)
+        if page_element_has_text?(page_element_array)
+          text_hash = text_reader(page_element_array[1])
+          page_element_hash = page_element_array.first
+          element = get_page_element(page_element_hash)
+          @state = (text?(text_hash, element.text) == false) ? :failed : :passed
+          result = text_result(text_hash, element.text)
+          @test_result.merge!(result)
+        end
+      end
+
+      def page_element_exists_result(page_element_hash, state)
+        key, value = page_element_hash
+        if state == true
+          {exists: "#{key.inspect} with #{value.inspect}"}
+        elsif state == false
+          {does_not_exist: "#{key.inspect} with #{value.inspect}"}
+        end
+      end
+
+      #[div: {id:"test", class: "test-section"}, text: "this is a test"]
+      def exists_reader(page_element_array)
+        error_message = "Invalid page element in #{page_element_array.inspect}"
+        raise error_message unless page_element_array.is_a? Array
+        raise error_message unless page_element_array.first.is_a? Hash
+        return page_element_array
+      end
+
+      #page_element_hash format
+      #{div: {id:"test", class: "test-section"}}
+      def page_element_reader(page_element_hash)
+        error_message = "Invalid page element in #{page_element_hash.inspect}"
+        raise error_message unless page_element_hash.is_a? Hash
+        key, value = page_element_hash.first
+        raise error_message unless key.is_a? Symbol
+        raise error_message unless value.is_a? Hash
+        return page_element_hash
+      end
+
+      def page_element_exists?(element_hash)
+        element = get_page_element(element_hash)
+        element.exists?
+      end
+
+      def page_element_text_reader(text_array)
+        text_hash = text_reader(text_array)
+      end
+
+      def page_element_text?(text_hash, element_text)
+        text?(text_hash, element_text)
+      end
+
+      def page_element_has_text?(page_element_array)
+        page_element_array[1] == nil ? false : true
+      end
+
+      #page_element_hash format
+      #{div: {id:"test", class: "test-section"}}
+      def get_page_element(page_element_hash)
+        key, value = page_element_hash.first
+        element_object = @browser.send(key, value)
+      end
+
+      #text_hash format
       #{text: "Welcome to my site"}
       #{includes_text: "to my site"}
-      def title_result(hash, browser_title)
+      def text_result(hash, browser_title)
         if hash[:text]
           {expected_page_title: hash[:text], got: browser_title}
         elsif hash[:includes_text]
@@ -59,59 +165,30 @@ module Ragios
         end
       end
 
-      #title format
+      #text_array format
       #[text: "Welcome to my site"]
       #[includes_text: "to my site"]
-      def title_reader(title)
+      def text_reader(text_array)
         #add custom exception later
-        raise "Invalid title" unless title.class == Array
-        raise "Invalid title" unless title.first.class == Hash
-        return title.first
+        error_message =
+        raise "Invalid text in #{text_array.inspect}" unless text_array.is_a? Array
+        raise "Invalid text in #{text_array.first.inspect}" unless text_array.first.is_a? Hash
+        return text_array.first
       end
 
       #hash format
       #{text: "Welcome to my site"}
       #{includes_text: "to my site"}
-      #title evaluator:
-      def title?(hash, browser_title)
+      #text evaluator:
+      def text?(hash, assert_eq_text)
         if hash[:text]
-          hash[:text] == browser_title
+          hash[:text] == assert_eq_text
         elsif hash[:includes_text]
-          browser_title.include? hash[:includes_text]
+          assert_eq_text.include? hash[:includes_text]
         else
           raise "Could not evaluate title"
         end
       end
-
-      def exists(element)
-      end
-
-      def exists?(element)
-      end
-
-      #browser
-      #["firefox", headless: true]
-      #["firefox", headless: false]
-      #["firefox"]
-      def browser_reader(browser)
-        raise "Invalid Browser" unless browser.class == Array
-        raise "Invalid Browser" unless browser.first.class == String
-        if browser.length > 1
-          raise "Invalid Browser" unless browser[1].class == Hash
-          raise "Invalid Browser" unless [TrueClass, FalseClass].include? browser[1][:headless].class
-        end
-        return browser
-      end
-
-      #browser
-      #["firefox", headless: true]
-      #["firefox", headless: false]
-      #["firefox"]
-      def browser(browser)
-        @headless = browser[1][:headless] if browser[1]
-        browser.first
-      end
-
     end
   end
 end
