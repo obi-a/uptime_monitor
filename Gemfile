@@ -5,6 +5,7 @@ source "http://rubygems.org"
 gem 'headless'
 gem 'watir-webdriver'
 gem 'watir-webdriver-performance'
+gem 'activesupport'
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.

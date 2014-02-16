@@ -14,7 +14,7 @@ Using a real web browser, this plugin checks a webpage at the specified time int
                via: "email_notifier",
                plugin: "uptime_monitor",
                exists?: [
-                          [div: {id:"test", class: "test-section"}, text: "this is a test" ],
+                          [{div: {id:"test", class: "test-section"}}, [text: "this is a test"]],
                           [link: {class: "main-link"}],
                           [element: {css: "#submit-button"}]
                         ],
@@ -23,6 +23,19 @@ Using a real web browser, this plugin checks a webpage at the specified time int
             }
 
  ragios.add [monitor]
+</pre>
+
+###Real site test:
+<pre lang="ruby">
+  monitor = {monitor: "About Us page",
+               url: "https://www.southmunn.com/aboutus",
+              title?: [text: "About Us - Website Uptime Monitoring | SouthMunn.com"],
+              browser: ["firefox", headless: false],
+              exists?: [
+                          [{div: {class: "box_content"}}, [includes_text: "SouthMunn is a Website Uptime Monitoring SASS created and maintained by"]],
+                          [img: {src: "https://fc03.deviantart.net/fs14/f/2007/047/f/2/Street_Addiction_by_gizmodus.jpg"}],
+                        ],
+            }
 </pre>
 
 ###Supported browsers:
@@ -44,3 +57,5 @@ title?: [includes_text: "to my site"]
 </pre>
 1. verifies that page title is the same with provided text
 2. verifies that page title contains provided substring
+
+###Inside REPL - test web pages with uptime_monitor

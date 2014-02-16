@@ -1,3 +1,4 @@
+#proof of concept
 #rewite later
 module Ragios
   module Plugin
@@ -14,23 +15,27 @@ module Ragios
       end
 
       def test_command?
-        @test_result = {}
+        @test_result = ActiveSupport::OrderedHash.new
         @state = :pending
-        browser_name = browser(@monitor.browser)
-        headless = start_headless if @headless
-        @browser = goto(@monitor.url, browser_name)
-        verify_correct_page_title(@monitor.title?, browser.title) if @monitor.title?
+        browser_name = browser_eval(@monitor.browser)
+        headless_browser = start_headless if @headless
+        @web_browser = goto(@monitor.url, browser_name)
+        verify_correct_page_title(@monitor.title?, @web_browser.title) if @monitor.title?
         parse_page_elements(@monitor.exists?) if @monitor.exists?
-        @browser.close
+        @web_browser.close
         headless.destroy if @headless
         @state == :failed ? false : true
+      rescue Exception => e
+        @web_browser.close
+        headless.destroy if @headless
+        raise e
       end
 
       def verify_correct_page_title(monitor_title, browser_title)
-          title_hash = text_reader(monitor_title)
-          @state = (text?(title_hash, browser_title) == false) ? :failed : :passed
-          result = text_result(title_hash, browser_title)
-          @test_result.merge!(result)
+        title_hash = text_reader("page title", monitor_title)
+        @state = (text?("page title", title_hash, browser_title) == false) ? :failed : :passed
+        result = text_result(:page_title, title_hash, browser_title)
+        @test_result.merge!(result)
       end
 
       #browser
@@ -52,7 +57,8 @@ module Ragios
       #["firefox", headless: true]
       #["firefox", headless: false]
       #["firefox"]
-      def browser(browser)
+      def browser_eval(browser)
+        browser = browser_reader(browser)
         @headless = browser[1][:headless] if browser[1]
         browser.first
       end
@@ -70,8 +76,8 @@ module Ragios
       end
 
       def parse_page_elements(page_elements)
-        page_elements = exists_reader(page_elements)
         page_elements.each do |page_element|
+          page_element = exists_reader(page_element)
           verify_correct_page_element(page_element)
         end
       end
@@ -91,21 +97,20 @@ module Ragios
 
       def verify_correct_page_element_text(page_element_array)
         if page_element_has_text?(page_element_array)
-          text_hash = text_reader(page_element_array[1])
+          text_hash = text_reader("page element", page_element_array[1])
           page_element_hash = page_element_array.first
           element = get_page_element(page_element_hash)
-          @state = (text?(text_hash, element.text) == false) ? :failed : :passed
-          result = text_result(text_hash, element.text)
+          @state = (text?("page element", text_hash, element.text) == false) ? :failed : :passed
+          result = text_result(:page_element,text_hash, element.text)
           @test_result.merge!(result)
         end
       end
 
       def page_element_exists_result(page_element_hash, state)
-        key, value = page_element_hash
-        if state == true
-          {exists: "#{key.inspect} with #{value.inspect}"}
-        elsif state == false
-          {does_not_exist: "#{key.inspect} with #{value.inspect}"}
+        if state == :passed
+          {page_element_hash => :exists }
+        elsif state == :failed
+          {page_element_hash => :does_not_exist}
         end
       end
 
@@ -133,14 +138,6 @@ module Ragios
         element.exists?
       end
 
-      def page_element_text_reader(text_array)
-        text_hash = text_reader(text_array)
-      end
-
-      def page_element_text?(text_hash, element_text)
-        text?(text_hash, element_text)
-      end
-
       def page_element_has_text?(page_element_array)
         page_element_array[1] == nil ? false : true
       end
@@ -149,17 +146,21 @@ module Ragios
       #{div: {id:"test", class: "test-section"}}
       def get_page_element(page_element_hash)
         key, value = page_element_hash.first
-        element_object = @browser.send(key, value)
+        element_object = @web_browser.send(key, value)
       end
 
       #text_hash format
       #{text: "Welcome to my site"}
       #{includes_text: "to my site"}
-      def text_result(hash, browser_title)
+      #rewrite to include state and give a more simplified result
+      def text_result(symbol, hash, text,state)
         if hash[:text]
-          {expected_page_title: hash[:text], got: browser_title}
+          expected = "expected_#{symbol}_expected".to_sym
+          r = {hash[:text] => expected, text => "#{symbol}_found".to_sym}
         elsif hash[:includes_text]
-          {expected_page_title_to_include: hash[:includes_text], got: browser_title}
+          expected = "expected_#{symbol}_to_include".to_sym
+          {hash[:includes_text] => expected,
+           text => "#{symbol}_found".to_sym}
         else
           {}
         end
@@ -168,11 +169,10 @@ module Ragios
       #text_array format
       #[text: "Welcome to my site"]
       #[includes_text: "to my site"]
-      def text_reader(text_array)
+      def text_reader(symbol, text_array)
         #add custom exception later
-        error_message =
-        raise "Invalid text in #{text_array.inspect}" unless text_array.is_a? Array
-        raise "Invalid text in #{text_array.first.inspect}" unless text_array.first.is_a? Hash
+        raise "Invalid #{symbol} in #{text_array.inspect}" unless text_array.is_a? Array
+        raise "Invalid #{symbol} in #{text_array.first.inspect}" unless text_array.first.is_a? Hash
         return text_array.first
       end
 
@@ -180,13 +180,13 @@ module Ragios
       #{text: "Welcome to my site"}
       #{includes_text: "to my site"}
       #text evaluator:
-      def text?(hash, assert_eq_text)
+      def text?(symbol, hash, assert_eq_text)
         if hash[:text]
           hash[:text] == assert_eq_text
         elsif hash[:includes_text]
           assert_eq_text.include? hash[:includes_text]
         else
-          raise "Could not evaluate title"
+          raise "Could not evaluate #{symbol} in #{hash.inspect}"
         end
       end
     end
