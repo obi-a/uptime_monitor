@@ -7,6 +7,7 @@ module Ragios
       attr_reader :test_result
       attr_reader :state
       attr_reader :headless
+      attr_reader :success
 
       def init(monitor)
         @state = :pending
@@ -16,15 +17,18 @@ module Ragios
 
       def test_command?
         @test_result = ActiveSupport::OrderedHash.new
+        @success = true
         @state = :pending
         browser_name = browser_eval(@monitor.browser)
         headless_browser = start_headless if @headless
         @web_browser = goto(@monitor.url, browser_name)
+        response_time = @web_browser.performance.summary[:response_time]
+        @test_result.merge!({load_time_mili_secs: response_time})
         verify_correct_page_title(@monitor.title?, @web_browser.title) if @monitor.title?
         parse_page_elements(@monitor.exists?) if @monitor.exists?
         @web_browser.close
         headless.destroy if @headless
-        @state == :failed ? false : true
+        @success
       rescue Exception => e
         @web_browser.close
         headless.destroy if @headless
@@ -34,7 +38,8 @@ module Ragios
       def verify_correct_page_title(monitor_title, browser_title)
         title_hash = text_reader("page title", monitor_title)
         @state = (text?("page title", title_hash, browser_title) == false) ? :failed : :passed
-        result = text_result(:page_title, title_hash, browser_title)
+        @success = false if @state == :failed
+        result = text_result(:page_title, title_hash, browser_title, @state)
         @test_result.merge!(result)
       end
 
@@ -83,13 +88,14 @@ module Ragios
       end
 
       #page_element_array
-      #[div: {id:"test", class: "test-section"}, text: "this is a test"]
+      #[{div: {id:"test", class: "test-section"}}, [text: "this is a test"]]
       #page_element_hash
       #div: {id:"test", class: "test-section"}
       def verify_correct_page_element(page_element_array)
         page_element_hash = page_element_reader(page_element_array.first)
         page_element_exists = page_element_exists?(page_element_hash)
-        @state = page_element_exists ? :passed : :falied
+        @state = page_element_exists ? :passed : :failed
+        @success = false if @state == :failed
         result = page_element_exists_result(page_element_hash, @state)
         @test_result.merge!(result)
         verify_correct_page_element_text(page_element_array)
@@ -100,9 +106,12 @@ module Ragios
           text_hash = text_reader("page element", page_element_array[1])
           page_element_hash = page_element_array.first
           element = get_page_element(page_element_hash)
-          @state = (text?("page element", text_hash, element.text) == false) ? :failed : :passed
-          result = text_result(:page_element,text_hash, element.text)
-          @test_result.merge!(result)
+          if element.exists?
+            @state = (text?("page element", text_hash, element.text) == false) ? :failed : :passed
+            @success = false if @state == :failed
+            result = text_result(:page_element,text_hash, element.text, @state)
+            @test_result.merge!(result)
+          end
         end
       end
 
@@ -114,7 +123,7 @@ module Ragios
         end
       end
 
-      #[div: {id:"test", class: "test-section"}, text: "this is a test"]
+      #[{div: {id:"test", class: "test-section"}}, [text: "this is a test"]]
       def exists_reader(page_element_array)
         error_message = "Invalid page element in #{page_element_array.inspect}"
         raise error_message unless page_element_array.is_a? Array
@@ -152,17 +161,21 @@ module Ragios
       #text_hash format
       #{text: "Welcome to my site"}
       #{includes_text: "to my site"}
-      #rewrite to include state and give a more simplified result
       def text_result(symbol, hash, text,state)
         if hash[:text]
-          expected = "expected_#{symbol}_expected".to_sym
-          r = {hash[:text] => expected, text => "#{symbol}_found".to_sym}
+          if state == :passed
+            return {hash[:text] => "#{symbol}_text_matches_as_expected".to_sym}
+          elsif state == :failed
+            return {hash[:text] => {"#{symbol}_text_did_match_as_expected_got".to_sym => text}}
+          end
         elsif hash[:includes_text]
-          expected = "expected_#{symbol}_to_include".to_sym
-          {hash[:includes_text] => expected,
-           text => "#{symbol}_found".to_sym}
+          if state == :passed
+            return {hash[:includes_text] => "#{symbol}_include_text_as_expected".to_sym}
+          elsif state == :failed
+            return {hash[:includes_text] => { "#{symbol}_did_not_include_expected_text_got".to_sym => text}}
+          end
         else
-          {}
+          return {}
         end
       end
 
