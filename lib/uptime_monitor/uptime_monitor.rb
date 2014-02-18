@@ -48,7 +48,7 @@ module Ragios
       #["firefox", headless: false]
       #["firefox"]
       def browser_reader(browser)
-        error_message = "Invalid Browser in #{browser.inspect}"
+        error_message = "Invalid Browser: #{browser.inspect}"
         raise error_message unless browser.is_a? Array
         raise error_message unless browser.first.is_a? String
         if browser.length > 1
@@ -183,9 +183,8 @@ module Ragios
       #[text: "Welcome to my site"]
       #[includes_text: "to my site"]
       def text_reader(symbol, text_array)
-        #add custom exception later
-        raise "Invalid #{symbol} in #{text_array.inspect}" unless text_array.is_a? Array
-        raise "Invalid #{symbol} in #{text_array.first.inspect}" unless text_array.first.is_a? Hash
+        raise "Invalid #{symbol} text: #{text_array.inspect}" unless text_array.is_a? Array
+        raise "Invalid #{symbol} text: #{text_array.first.inspect}" unless text_array.first.is_a? Hash
         return text_array.first
       end
 
@@ -199,7 +198,7 @@ module Ragios
         elsif hash[:includes_text]
           assert_eq_text.include? hash[:includes_text]
         else
-          raise "Could not evaluate #{symbol} in #{hash.inspect}"
+          raise "Could not evaluate #{symbol}: #{hash.inspect}"
         end
       end
     end
