@@ -26,7 +26,7 @@ describe Ragios::Plugin::UptimeMonitor do
     expect {@u.browser_reader(browser)}.to raise_error(RuntimeError,"Invalid Browser: #{browser.inspect}")
   end
 
-  it "evaluates browser form" do
+  it "evaluates correct browser form" do
   #it only expects corrects browser form
     browser = ["firefox", headless: true]
     result = "firefox"
@@ -105,7 +105,7 @@ describe Ragios::Plugin::UptimeMonitor do
 
   it "returns correct text includes result when state is failed"
 
-  it "can start a browser headless" do
+  it "can start a headless browser" do
     headless = @u.start_headless
     headless.class.should == Headless
     url = "http://google.com"
