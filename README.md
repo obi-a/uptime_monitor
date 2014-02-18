@@ -1,7 +1,7 @@
 uptime_monitor
 ==============
 
-Website uptime monitor plugin for Ragios
+Website uptime monitor plugin for Ragios - uses real web browsers to monitor web pages for uptime.
 
 ##Specification:
 Using a real web browser, this plugin checks a webpage at the specified time intervals, to ensure that the specified elements of the page are still loading correctly.
