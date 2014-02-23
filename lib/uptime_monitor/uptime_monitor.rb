@@ -6,7 +6,6 @@ module Ragios
       attr_reader :monitor
       attr_reader :test_result
       attr_reader :state
-      attr_reader :headless
       attr_reader :success
 
       def init(monitor)
@@ -20,19 +19,20 @@ module Ragios
         @success = true
         @state = :pending
         browser_name = browser_eval(@monitor.browser)
-        headless_browser = start_headless if @headless
-        @web_browser = goto(@monitor.url, browser_name)
-        response_time = @web_browser.performance.summary[:response_time]
-        @test_result.merge!({load_time_mili_secs: response_time})
-        verify_correct_page_title(@monitor.title?, @web_browser.title) if @monitor.title?
+        headless = is_headless(@monitor.browser)
+        @web_browser = start_browser(@monitor.url, browser_name, headless)
+        set_response_time
+        verify_correct_page_title(@monitor.title?, @web_browser.page_title) if @monitor.title?
         parse_page_elements(@monitor.exists?) if @monitor.exists?
         @web_browser.close
-        headless.destroy if @headless
         @success
       rescue Exception => e
         @web_browser.close
-        headless.destroy if @headless
         raise e
+      end
+
+      def start_browser(url, browser_name, headless)
+        Hercules::UptimeMonitor::Browser.new(url, browser_name, headless)
       end
 
       def verify_correct_page_title(monitor_title, browser_title)
@@ -41,6 +41,11 @@ module Ragios
         @success = false if @state == :failed
         result = text_result(:page_title, title_hash, browser_title, @state)
         @test_result.merge!(result)
+      end
+
+      def set_response_time
+        response_time = @web_browser.response_time
+        @test_result.merge!({load_time_mili_secs: response_time})
       end
 
       #browser
@@ -64,20 +69,11 @@ module Ragios
       #["firefox"]
       def browser_eval(browser)
         browser = browser_reader(browser)
-        @headless = browser[1][:headless] if browser[1]
         browser.first
       end
 
-      def goto(url, browser_name)
-        browser = Watir::Browser.new browser_name
-        browser.goto url
-        return browser
-      end
-
-      def start_headless
-        headless = Headless.new
-        headless.start
-        return headless
+      def is_headless(browser)
+        browser[1][:headless] if browser[1]
       end
 
       def parse_page_elements(page_elements)
@@ -105,8 +101,7 @@ module Ragios
         if page_element_has_text?(page_element_array)
           text_hash = text_reader("page element", page_element_array[1])
           page_element_hash = page_element_array.first
-          element = get_page_element(page_element_hash)
-          if element.exists?
+          if page_element_exists?(page_element_hash)
             @state = (text?("page element", text_hash, element.text) == false) ? :failed : :passed
             @success = false if @state == :failed
             result = text_result(:page_element,text_hash, element.text, @state)
@@ -143,19 +138,11 @@ module Ragios
       end
 
       def page_element_exists?(element_hash)
-        element = get_page_element(element_hash)
-        element.exists?
+        @web_browser.page_element_exists?(element_hash)
       end
 
       def page_element_has_text?(page_element_array)
         page_element_array[1] == nil ? false : true
-      end
-
-      #page_element_hash format
-      #{div: {id:"test", class: "test-section"}}
-      def get_page_element(page_element_hash)
-        key, value = page_element_hash.first
-        element_object = @web_browser.send(key, value)
       end
 
       #text_hash format
