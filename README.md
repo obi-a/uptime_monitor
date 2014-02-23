@@ -1,10 +1,11 @@
 uptime_monitor
 ==============
 
-Website uptime monitor plugin for Ragios - uses real web browsers to monitor web pages for uptime.
+Website uptime monitoring plugin for Ragios - uses real web browsers to monitor web pages for uptime.
 
 ##Specification:
 Using a real web browser, this plugin checks a webpage at the specified time intervals, to ensure that the specified elements of the page are still loading correctly.
+
 <pre lang="ruby">
 monitor = {monitor: "My Website",
             url: "http://mysite.com",
@@ -14,7 +15,8 @@ monitor = {monitor: "My Website",
             plugin: "uptime_monitor",
             exists?: [
                         [{div: {id:"test", class: "test-section"}}, [text: "this is a test"]],
-                        [link: {class: "main-link"}],
+                        [a: {href: "/aboutus" }],
+                        [form: {action: "/signup", method: "get"}],
                         [element: {css: "#submit-button"}]
                       ],
             title?: [text: "Welcome to my site"],

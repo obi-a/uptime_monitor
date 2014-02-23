@@ -106,6 +106,7 @@ describe Ragios::Plugin::UptimeMonitor do
   it "returns correct text includes result when state is failed"
 
   it "can start a headless browser" do
+    @u.browser_eval(["", headless: true])
     headless = @u.start_headless
     headless.class.should == Headless
     url = "http://google.com"

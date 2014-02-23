@@ -20,18 +20,15 @@ module Ragios
         @success = true
         @state = :pending
         browser_name = browser_eval(@monitor.browser)
-        headless_browser = start_headless if @headless
-        @web_browser = goto(@monitor.url, browser_name)
-        response_time = @web_browser.performance.summary[:response_time]
-        @test_result.merge!({load_time_mili_secs: response_time})
+        start_headless
+        goto(@monitor.url, browser_name)
+        set_response_time
         verify_correct_page_title(@monitor.title?, @web_browser.title) if @monitor.title?
         parse_page_elements(@monitor.exists?) if @monitor.exists?
-        @web_browser.close
-        headless.destroy if @headless
+        close_browser
         @success
       rescue Exception => e
-        @web_browser.close
-        headless.destroy if @headless
+        close_browser
         raise e
       end
 
@@ -41,6 +38,16 @@ module Ragios
         @success = false if @state == :failed
         result = text_result(:page_title, title_hash, browser_title, @state)
         @test_result.merge!(result)
+      end
+
+      def set_response_time
+        response_time = @web_browser.performance.summary[:response_time]
+        @test_result.merge!({load_time_mili_secs: response_time})
+      end
+
+      def close_browser
+        @web_browser.close
+        @headless.destroy if @is_headless
       end
 
       #browser
@@ -64,20 +71,22 @@ module Ragios
       #["firefox"]
       def browser_eval(browser)
         browser = browser_reader(browser)
-        @headless = browser[1][:headless] if browser[1]
+        @is_headless = browser[1][:headless] if browser[1]
         browser.first
       end
 
       def goto(url, browser_name)
-        browser = Watir::Browser.new browser_name
-        browser.goto url
-        return browser
+        @web_browser = Watir::Browser.new browser_name
+        @web_browser.goto url
+        return @browser
       end
 
       def start_headless
-        headless = Headless.new
-        headless.start
-        return headless
+        if @is_headless
+          @headless = Headless.new
+          @headless.start
+          @headless
+        end
       end
 
       def parse_page_elements(page_elements)
