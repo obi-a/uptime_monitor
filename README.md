@@ -1,5 +1,5 @@
-uptime_monitor
-==============
+uptime_monitor (Hercules)
+==========================
 
 Website uptime monitoring plugin for Ragios - uses real web browsers to monitor web pages for uptime.
 
@@ -18,7 +18,7 @@ monitor = {monitor: "My Website",
                         [a: {href: "/aboutus" }],
                         [form: {action: "/signup", method: "get"}],
                         [element: {css: "#submit-button"}]
-                      ],
+                     ],
             title?: [text: "Welcome to my site"],
             browser: ["firefox", headless: true]
           }
@@ -34,7 +34,7 @@ monitor = {monitor: "About Us page",
             exists?: [
                         [{div: {class: "box_content"}}, [includes_text: "SouthMunn is a Website Uptime Monitoring SASS created and maintained by"]],
                         [img: {src: "https://fc03.deviantart.net/fs14/f/2007/047/f/2/Street_Addiction_by_gizmodus.jpg"}],
-                      ],
+                     ],
           }
 
 u = Ragios::Plugin::UptimeMonitor.new

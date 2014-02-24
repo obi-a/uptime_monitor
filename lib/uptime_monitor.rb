@@ -3,6 +3,11 @@ require 'watir-webdriver'
 require 'watir-webdriver-performance'
 require 'ostruct'
 require 'active_support'
-require File.expand_path('../uptime_monitor/uptime_monitor', __FILE__)
-require File.expand_path('../uptime_monitor/browser', __FILE__)
 
+def require_all(path)
+  Dir.glob(File.dirname(__FILE__) + path + '/*.rb') do |file|
+    require File.dirname(__FILE__)  + path + '/' + File.basename(file, File.extname(file))
+  end
+end
+
+require_all '/uptime_monitor'
