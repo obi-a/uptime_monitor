@@ -1,7 +1,7 @@
 module Hercules
   module UptimeMonitor
     class Browser
-      def initialize(url, browser_name, is_headless = false)
+      def initialize(url, browser_name = "firefox", is_headless = false)
         start_headless if is_headless
         goto(url,browser_name)
       end
@@ -19,6 +19,10 @@ module Hercules
         key, value = page_element.first
         element = @browser.send(key, value)
         element.exists?
+      end
+
+      def browser
+        @browser
       end
 
     private

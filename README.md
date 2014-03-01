@@ -14,12 +14,43 @@ monitor = {monitor: "My Website",
             via: "email_notifier",
             plugin: "uptime_monitor",
             exists?: [
+                        [:title, [text: "Welcome to my site"]],
                         [{div: {id:"test", class: "test-section"}}, [text: "this is a test"]],
                         [a: {href: "/aboutus" }],
+                        [:h1],
+                        [:h2,[text: "Login"]],
                         [form: {action: "/signup", method: "get"}],
-                        [element: {css: "#submit-button"}]
+                        [{element: {css: "#submit-button"}}, [:click]],
+                        [{text_field: {id: "username"}}, [set: "admin"]],
+                        [{text_field: {id: "password"}}, [set: "pass"]],
+                        [link: {text: "Contact Us"}],
+                        [wait_until_exists?: [div: {id:"open-section"}]]
                      ],
-            title?: [text: "Welcome to my site"],
+            browser: ["firefox", headless: true]
+          }
+ragios.add [monitor]
+</pre>
+
+###Monitor login process of a real site
+<pre lang="ruby">
+login_process = [
+                    [:title, [text: "Website Uptime Monitoring | SouthMunn.com"]],
+                    [{link: {text:"Login"}}, [:click]],
+                    [:title, [text: "Sign in - Website Uptime Monitoring | SouthMunn.com"]],
+                    [{text_field: {id: "username"}}, [set: "admin"]],
+                    [{text_field: {id: "password"}}, [set: "pass"]],
+                    [:button, [:click]],
+                    [:title, [text: "Dashboard - Website Uptime Monitoring | SouthMunn.com"]]
+
+                ]
+
+monitor = {monitor: "My Website",
+            url: "https:/southmunn.com",
+            every: "5m",
+            contact: "admin@mail.com",
+            via: "email_notifier",
+            plugin: "uptime_monitor",
+            exists?: login_process,
             browser: ["firefox", headless: true]
           }
 ragios.add [monitor]
