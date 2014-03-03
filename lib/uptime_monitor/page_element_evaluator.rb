@@ -22,7 +22,7 @@ module Hercules
       def has_text?(page_element_array)
         page_element_array[1] == nil ? false : true
       end
-      def result(page_element_hash, state)
+      def exists_result(page_element_hash, state)
         if state == :passed
           {page_element_hash => :exists }
         elsif state == :failed

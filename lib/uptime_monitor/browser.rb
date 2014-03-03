@@ -20,6 +20,9 @@ module Hercules
         element = @browser.send(key, value)
         element.exists?
       end
+      def page_element_text(page_element)
+        #return text
+      end
 
       def browser
         @browser

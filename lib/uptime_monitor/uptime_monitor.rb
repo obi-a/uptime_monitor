@@ -21,7 +21,6 @@ module Ragios
         headless = browser_eval.is_headless(@monitor.browser)
         @web_browser = start_browser(@monitor.url, browser_name, headless)
         set_response_time
-        verify_correct_page_title(@monitor.title?, @web_browser.page_title) if @monitor.title?
         parse_page_elements(@monitor.exists?) if @monitor.exists?
         @web_browser.close
         @success
@@ -42,17 +41,8 @@ module Ragios
         Hercules::UptimeMonitor::TextEvaluator.new
       end
 
-      def page_element_evaluator
-        Hercules::UptimeMonitor::PageElementEvaluator.new
-      end
-
-      def verify_correct_page_title(monitor_title, browser_title)
-        text_eval = text_evaluator
-        title_hash = text_eval.read("page title", monitor_title)
-        @state = (text_eval.text?("page title", title_hash, browser_title) == false) ? :failed : :passed
-        @success = false if @state == :failed
-        result = text_eval.result(:page_title, title_hash, browser_title, @state)
-        @test_result.merge!(result)
+      def create_page_element
+        Hercules::UptimeMonitor::PageElement.new
       end
 
       def set_response_time
@@ -62,40 +52,54 @@ module Ragios
 
       def parse_page_elements(page_elements)
         page_elements.each do |page_element|
-          page_element = page_element_evaluator.exists_read(page_element)
           verify_correct_page_element(page_element)
         end
       end
+      #DRY UP later
+      def apply_action(page_element_array)
+        page_element = create_page_element(page_element_array)
+        if page_element.has_action?
+          @state = @web_browser.action?(page_element.element, page_element.action) ? :passed : :failed
+          @success  = false if @state == :failed
+          result = page_element.action_performed_result(@state)
+          @test_result.merge!(result)
+        end
+      end
 
-      #page_element_array
-      #[{div: {id:"test", class: "test-section"}}, [text: "this is a test"]]
-      #page_element_hash
-      #div: {id:"test", class: "test-section"}
       def verify_correct_page_element(page_element_array)
-        page_element_eval = page_element_evaluator
-        page_element_hash = page_element_eval.read(page_element_array.first)
-        page_element_exists = page_element_exists?(page_element_hash)
-        @state = page_element_exists ? :passed : :failed
+        page_element = create_page_element(page_element_array)
+        if page_element.is_wait_until?
+          wait_until(page_element.wait_until_element)
+        else
+          @state = page_element_exists?(page_element.element) ? :passed : :failed
+          @success = false if @state == :failed
+          result = page_element.exists_result(@state)
+          @test_result.merge!(result)
+          verify_correct_page_element_text(page_element_array)
+          apply_action(page_element_array)
+        end
+      end
+
+      def wait_until(page_element)
+        @state = @web_browser.wait_until_element?(page_element) ? :passed : :failed
         @success = false if @state == :failed
-        result = page_element_eval.result(page_element_hash, @state)
+        result = page_element.wait_until_result(@state)
         @test_result.merge!(result)
-        verify_correct_page_element_text(page_element_array)
       end
 
       def verify_correct_page_element_text(page_element_array)
-        if page_element_evaluator.has_text?(page_element_array)
-          text_eval = text_evaluator
-          text_hash = text_eval.read("page element", page_element_array[1])
-          page_element_hash = page_element_array.first
-          if page_element_exists?(page_element_hash)
-            @state = (text_eval.text?("page element", text_hash, element.text) == false) ? :failed : :passed
+        page_element = create_page_element(page_element_array)
+        if page_element.has_text?
+          text = text_evaluator(page_element.text)
+          if page_element_exists?(page_element.element)
+            element_text = @web_browser.page_element_text(page_element.element)
+            @state = (text.match?(element_text) == false) ? :failed : :passed
             @success = false if @state == :failed
-            result = text_eval.result(:page_element,text_hash, element.text, @state)
+            result = text.result(element_text, @state)
             @test_result.merge!(result)
           end
         end
       end
-
       def page_element_exists?(element_hash)
         @web_browser.page_element_exists?(element_hash)
       end

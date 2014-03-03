@@ -41,7 +41,6 @@ login_process = [
                     [{text_field: {id: "password"}}, [set: "pass"]],
                     [:button, [:click]],
                     [:title, [text: "Dashboard - Website Uptime Monitoring | SouthMunn.com"]]
-
                 ]
 
 monitor = {monitor: "My Website",
