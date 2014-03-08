@@ -59,7 +59,6 @@ ragios.add [monitor]
 <pre lang="ruby">
 monitor = {monitor: "About Us page",
             url: "https://www.southmunn.com/aboutus",
-            title?: [text: "About Us - Website Uptime Monitoring | SouthMunn.com"],
             browser: ["firefox", headless: false],
             exists?: [
                         [{div: {class: "box_content"}}, [includes_text: "SouthMunn is a Website Uptime Monitoring SASS created and maintained by"]],
@@ -72,29 +71,28 @@ u.init monitor
 u.test_command?
 #=> true
 u.test_result
-#=> {:load_time_mili_secs=>8583,
-# "About Us - Website Uptime Monitoring | SouthMunn.com"=>
-#  :page_title_text_matches_as_expected,
-# {:div=>{:class=>"box_content"}}=>:exists,
-# "SouthMunn is a Website Uptime Monitoring SASS created and maintained by"=>
-#  :page_element_include_text_as_expected,
-# {:img=>
-#   {:src=>
-#     "https://fc03.deviantart.net/fs14/f/2007/047/f/2/Street_Addiction_by_gizmodus.jpg"}}=>
-#  :exists}
+#=> {[{:div=>{:class=>"box_content"}},
+#  [{:includes_text=>
+#     "SouthMunn is a Website Uptime Monitoring SASS created and maintained by"}]]=>
+#  :exists_as_expected,
+# [{:img=>
+#    {:src=>
+#      "https://fc03.deviantart.net/fs14/f/2007/047/f/2/Street_Addiction_by_gizmodus.jpg"}}]=>
+#  :exists_as_expected}
+
 
 #test result during downtime
 u.test_command?
 #=> false
 u.test_result
-#=> {:load_time_mili_secs=>91,
-# "About Us - Website Uptime Monitoring | SouthMunn.com"=>
-#  {:page_title_text_did_match_as_expected_got=>"Problem loading page"},
-# {:div=>{:class=>"box_content"}}=>:does_not_exist,
-# {:img=>
-#   {:src=>
-#     "https://fc03.deviantart.net/fs14/f/2007/047/f/2/Street_Addiction_by_gizmodus.jpg"}}=>
-#  :does_not_exist}
+#=> {[{:div=>{:class=>"box_content"}},
+#  [{:includes_text=>
+#     "SouthMunn is a Website Uptime Monitoring SASS created and maintained by"}]]=>
+#  :exists_as_expected,
+# [{:img=>
+#    {:src=>
+#      "https://fc03.deviantart.net/fs14/f/2007/047/f/2/Street_Addiction_by_gizmodus.jpg"}}]=>
+#  :does_not_exist_as_expected}
 </pre>
 
 ###Supported browsers:
@@ -108,13 +106,5 @@ browser: ["firefox"]
 browser: ["chrome"]
 </pre>
 Running a browser headless requires xvfb installed.
-
-### Page title test format:
-<pre lang="ruby">
-title?: [text: "Welcome to my site"]
-title?: [includes_text: "to my site"]
-</pre>
-1. verifies that page title is the same with provided text
-2. verifies that page title contains provided substring
 
 ###More details coming soon
