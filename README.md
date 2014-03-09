@@ -1,10 +1,10 @@
 uptime_monitor (Hercules)
 ==========================
 
-Website uptime monitoring plugin for Ragios - uses real web browsers to monitor web pages for uptime.
+Website uptime monitoring plugin for Ragios - uses real web browsers to monitor websites for uptime.
 
 ##Specification:
-Using a real web browser, this plugin checks a webpage at the specified time intervals, to ensure that the specified elements of the page are still loading correctly.
+Using a real web browser, this plugin checks pages of a website at the specified time intervals, to ensure that the specified elements of the pages and features of the site are still working correctly.
 
 <pre lang="ruby">
 monitor = {monitor: "My Website",
@@ -88,7 +88,7 @@ u.test_result
 #=> {[{:div=>{:class=>"box_content"}},
 #  [{:includes_text=>
 #     "SouthMunn is a Website Uptime Monitoring SASS created and maintained by"}]]=>
-#  :exists_as_expected,
+#  :does_not_exist_as_expected,
 # [{:img=>
 #    {:src=>
 #      "https://fc03.deviantart.net/fs14/f/2007/047/f/2/Street_Addiction_by_gizmodus.jpg"}}]=>

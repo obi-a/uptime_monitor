@@ -17,11 +17,15 @@ module Ragios
         browser_reader = Hercules::UptimeMonitor::BrowserReader.new(@monitor.browser)
         @browser = start_browser(@monitor.url, browser_reader.browser_name, browser_reader.headless)
         exists(@monitor.exists?)
-        @browser.close
+        close_browser
         @success
       rescue Exception => e
-        @browser.close
+        close_browser
         raise e
+      end
+
+      def close_browser
+        @browser.close
       end
 
       def start_browser(url, browser_name, headless)

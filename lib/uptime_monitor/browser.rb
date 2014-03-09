@@ -13,6 +13,7 @@ module Hercules
         page_element[1..-1]
       end
       def exists?(page_element)
+        raise "Invalid page element format: #{page_element.inspect}" unless page_element.is_a? Array
         is_wait_until?(page_element.first) ? apply_wait_until?(page_element.first) : page_element_exists?(page_element)
       end
       def page_element_exists?(page_element)
@@ -43,6 +44,8 @@ module Hercules
           result = apply_text?(element.text, array.first)
         elsif is_an_action?(array)
           apply_action(element, array.first)
+        else
+          raise "Invalid options: #{array.inspect}"
         end
         result
       end
@@ -88,7 +91,6 @@ module Hercules
         else
           raise "Cannot apply action: #{action.inspect}"
         end
-        #rescue
       end
       def apply_wait_until(page_element)
         Watir::Wait.until { page_element_exists?(page_element) }
