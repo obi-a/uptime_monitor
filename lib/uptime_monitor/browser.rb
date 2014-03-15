@@ -14,11 +14,15 @@ module Hercules
       end
       def exists?(page_element)
         raise "Invalid page element format: #{page_element.inspect}" unless page_element.is_a? Array
-        is_wait_until?(page_element.first) ? apply_wait_until?(page_element.first) : page_element_exists?(page_element)
+        is_wait_until?(page_element.first) ? apply_wait_until?(page_element.first[:wait_until_exists?]) : page_element_exists?(page_element)
       end
       def page_element_exists?(page_element)
         element = get_element(page_element.first)
-        first_exists = element.exists?
+        begin
+          first_exists = element.exists?
+        rescue Exception => e
+          raise "Cannot find page element in this form: #{page_element.first.inspect}, you may use a css query form"
+        end
         if first_exists && !rest(page_element).empty?
           rest_exists?(element, rest(page_element))
         else
@@ -41,19 +45,19 @@ module Hercules
       end
       def apply_rest?(element, array)
         if is_a_text?(array)
-          result = apply_text?(element.text, array.first)
+          apply_text?(element.text, array.first)
         elsif is_an_action?(array)
-          apply_action(element, array.first)
+          apply_action?(element, array.first)
         else
           raise "Invalid options: #{array.inspect}"
         end
-        result
       end
       def is_a_text?(text_array)
         if text_array.is_a? Array
           if text_array.first.is_a? Hash
             text_hash = text_array.first
-            if [:text, :includes_text].include? text_hash.first[0]
+            key, value = text_hash.first
+            if (([:text, :includes_text].include?(key)) && (value.is_a? String))
              return true
             end
           end
@@ -82,7 +86,7 @@ module Hercules
           raise "Could not evaluate page_element text: #{text_hash.inspect}"
         end
       end
-      def apply_action(element, action)
+      def apply_action?(element, action)
         if action.is_a? Symbol
           element.send(action)
         elsif action.is_a? Hash
@@ -91,9 +95,13 @@ module Hercules
         else
           raise "Cannot apply action: #{action.inspect}"
         end
+        true
       end
-      def apply_wait_until(page_element)
+      def apply_wait_until?(page_element)
         Watir::Wait.until { page_element_exists?(page_element) }
+        true
+      rescue Watir::Wait::TimeoutError
+        false
       end
     private
       def goto(url, browser_name)

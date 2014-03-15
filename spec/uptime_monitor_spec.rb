@@ -1,2 +1,1 @@
-require 'rubygems'
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib/uptime_monitor'))
+require 'spec_helper'
