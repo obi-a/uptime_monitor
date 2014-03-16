@@ -37,7 +37,7 @@ describe Hercules::UptimeMonitor::Browser do
   it "cannot apply action in wrong form" do
     element = @browser.get_element({text_field: {id: "s"}})
     element.exists?.should ==  true
-    expect{@browser.apply_action?(element, "wrong form action")}.to raise_error(RuntimeError)
+    expect{@browser.apply_action?(element, "wrong form action")}.to raise_error(Hercules::UptimeMonitor::InvalidAction)
   end
   it "returns true for matching text form" do
    @browser.apply_text?("hello world", {text: "hello world"}).should == true
@@ -52,7 +52,7 @@ describe Hercules::UptimeMonitor::Browser do
    @browser.apply_text?("hello world", {includes_text: "something else"}).should == false
   end
   it "cannot match unknown text form" do
-    expect{@browser.apply_text?("hello world", {something_else: "something else"})}.to raise_error(RuntimeError)
+    expect{@browser.apply_text?("hello world", {something_else: "something else"})}.to raise_error(Hercules::UptimeMonitor::InvalidText)
   end
   it "can detect correct wait_until form" do
     @browser.is_wait_until?({wait_until_exists?: :anything}).should == true
@@ -89,7 +89,7 @@ describe Hercules::UptimeMonitor::Browser do
     @browser.apply_rest?(element,[{set: "github"}]).should == true
   end
   it "cannot apply rest for unknown form" do
-    expect{@browser.apply_rest?(:element,:something_else)}.to raise_error(RuntimeError)
+    expect{@browser.apply_rest?(:element,:something_else)}.to raise_error(Hercules::UptimeMonitor::InvalidRest)
   end
   it "returns true when all expressions are true for rest exists" do
     element = @browser.get_element(:title)
@@ -127,6 +127,9 @@ describe Hercules::UptimeMonitor::Browser do
     element = @browser.get_element({element: {css: '#rss-link'}})
     element.exists?.should ==  true
   end
+  it "cannot check if an element exists if element has incorrect form" do
+    expect{@browser.get_element("something_else")}.to raise_error(Hercules::UptimeMonitor::InvalidPageElement)
+  end
   it "can check if a symbol form page element exists" do
     @browser.page_element_exists?([:title]).should == true
   end
@@ -145,16 +148,18 @@ describe Hercules::UptimeMonitor::Browser do
   end
   it "cannot check if page_element_exists if first is in wrong form" do
    element = [{div: {unusual_attribute: "something_else", id: "something_else"}}]
-   expect{@browser.page_element_exists?(element)}.to raise_error(RuntimeError)
+   expect{@browser.page_element_exists?(element)}.to raise_error(Hercules::UptimeMonitor::UnknownPageElement)
   end
   it "can check if page_element_exists" do
     @browser.exists?([{text_field: {id: "s"}}]).should == true
     @browser.exists?([{wait_until_exists?: [{text_field: {id: "s"}}]}]).should == true
     @browser.exists?([{text_field: {id: "something_else"}}]).should == false
-    #returns false if after waiting for 30 seconds
+    #returns false if element doesn't exist after waiting for 30 seconds
     #@browser.exists?([{wait_until_exists?: [{text_field: {id: "something_else"}}]}]).should == false
   end
-
+  it "cannot check if page_element_exists when in a wrong form" do
+    expect{@browser.exists?("something_else")}.to raise_error(Hercules::UptimeMonitor::InvalidPageElementForm)
+  end
   it "returns the cdr of an array" do
     @browser.rest((1..5).to_a).should == (2..5).to_a
   end
