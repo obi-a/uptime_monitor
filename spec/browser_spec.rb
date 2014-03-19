@@ -3,16 +3,16 @@ require 'spec_helper'
 describe Hercules::UptimeMonitor::Browser do
   before(:all) do
     url= "http://obi-akubue.org"
-    headless = false
+    headless = true
     browser_name = "firefox"
     @browser = Hercules::UptimeMonitor::Browser.new(url, browser_name, headless)
   end
   it "can wait until a page element exists" do
     @browser.apply_wait_until?([:title]).should == true
   end
-  #it "times out if the page element never exists after 30 secs" do
-    #@browser.apply_wait_until?([{text_field: {id: "abc_dont_exist"}}]).should == false
-  #end
+  it "times out if the page element never exists after 30 secs" do
+    @browser.apply_wait_until?([{text_field: {id: "abc_dont_exist"}}]).should == false
+  end
 
   it "can apply an action" do
     element = @browser.get_element({text_field: {id: "s"}})
@@ -155,7 +155,7 @@ describe Hercules::UptimeMonitor::Browser do
     @browser.exists?([{wait_until_exists?: [{text_field: {id: "s"}}]}]).should == true
     @browser.exists?([{text_field: {id: "something_else"}}]).should == false
     #returns false if element doesn't exist after waiting for 30 seconds
-    #@browser.exists?([{wait_until_exists?: [{text_field: {id: "something_else"}}]}]).should == false
+    @browser.exists?([{wait_until_exists?: [{text_field: {id: "something_else"}}]}]).should == false
   end
   it "cannot check if page_element_exists when in a wrong form" do
     expect{@browser.exists?("something_else")}.to raise_error(Hercules::UptimeMonitor::InvalidPageElementForm)
