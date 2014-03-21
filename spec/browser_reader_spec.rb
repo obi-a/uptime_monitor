@@ -23,18 +23,18 @@ describe Hercules::UptimeMonitor::BrowserReader do
   end
   it "cannot read a browser in wrong form" do
     browser = 1
-    expect{Hercules::UptimeMonitor::BrowserReader.new(browser)}.to raise_error(RuntimeError)
+    expect{Hercules::UptimeMonitor::BrowserReader.new(browser)}.to raise_error(Hercules::UptimeMonitor::InvalidBrowserForm)
     browser = [1]
-    expect{Hercules::UptimeMonitor::BrowserReader.new(browser)}.to raise_error(RuntimeError)
+    expect{Hercules::UptimeMonitor::BrowserReader.new(browser)}.to raise_error(Hercules::UptimeMonitor::InvalidBrowserForm)
     browser = [@browser, 1]
-    expect{Hercules::UptimeMonitor::BrowserReader.new(browser)}.to raise_error(RuntimeError)
+    expect{Hercules::UptimeMonitor::BrowserReader.new(browser)}.to raise_error(Hercules::UptimeMonitor::InvalidHeadlessForm)
     browser = [@browser, something: :wrong]
-    expect{Hercules::UptimeMonitor::BrowserReader.new(browser)}.to raise_error(RuntimeError)
+    expect{Hercules::UptimeMonitor::BrowserReader.new(browser)}.to raise_error(Hercules::UptimeMonitor::InvalidHeadlessForm)
     browser = [@browser, something: true]
-    expect{Hercules::UptimeMonitor::BrowserReader.new(browser)}.to raise_error(RuntimeError)
+    expect{Hercules::UptimeMonitor::BrowserReader.new(browser)}.to raise_error(Hercules::UptimeMonitor::InvalidHeadlessForm)
     browser = [@browser, headless: "true"]
-    expect{Hercules::UptimeMonitor::BrowserReader.new(browser)}.to raise_error(RuntimeError)
+    expect{Hercules::UptimeMonitor::BrowserReader.new(browser)}.to raise_error(Hercules::UptimeMonitor::InvalidHeadlessForm)
     browser = [@browser, "headless" => true]
-    expect{Hercules::UptimeMonitor::BrowserReader.new(browser)}.to raise_error(RuntimeError)
+    expect{Hercules::UptimeMonitor::BrowserReader.new(browser)}.to raise_error(Hercules::UptimeMonitor::InvalidHeadlessForm)
   end
 end

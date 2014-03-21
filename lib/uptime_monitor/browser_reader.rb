@@ -16,12 +16,13 @@ module Hercules
       #["firefox", headless: false]
       #["firefox"]
       def read
-        error_message = "Invalid Browser: #{browser.inspect}"
-        raise error_message unless @browser.is_a? Array
-        raise error_message unless @browser.first.is_a? String
+        message = "Invalid Browser: #{@browser.inspect}"
+        raise(Hercules::UptimeMonitor::InvalidBrowserForm.new(error: message), message) unless @browser.is_a? Array
+        raise(Hercules::UptimeMonitor::InvalidBrowserForm.new(error: message), message) unless @browser.first.is_a? String
         if browser.length > 1
-          raise error_message unless @browser[1].is_a? Hash
-          raise error_message unless [TrueClass, FalseClass].include? @browser[1][:headless].class
+          error_message = "Invalid setting for headless browser in #{@browser.inspect}"
+          raise(Hercules::UptimeMonitor::InvalidHeadlessForm.new(error: message), message) unless @browser[1].is_a? Hash
+          raise(Hercules::UptimeMonitor::InvalidHeadlessForm.new(error: message), message) unless [TrueClass, FalseClass].include? @browser[1][:headless].class
         end
       end
       def eval
@@ -29,5 +30,12 @@ module Hercules
         @browser.first
       end
     end
+  end
+end
+
+module Hercules
+  module UptimeMonitor
+    class InvalidBrowserForm < StandardError; end
+    class InvalidHeadlessForm < StandardError; end
   end
 end

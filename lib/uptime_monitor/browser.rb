@@ -13,7 +13,8 @@ module Hercules
         page_element[1..-1]
       end
       def exists?(page_element)
-        raise Hercules::UptimeMonitor::InvalidPageElementForm.new(error: "Invalid page element format: #{page_element.inspect}"), "Invalid page element format: #{page_element.inspect}" unless page_element.is_a? Array
+        message = "Invalid page element format: #{page_element.inspect}"
+        raise(Hercules::UptimeMonitor::InvalidPageElementForm.new(error: message), message) unless page_element.is_a?(Array)
         is_wait_until?(page_element.first) ? apply_wait_until?(page_element.first[:wait_until_exists?]) : page_element_exists?(page_element)
       end
       def page_element_exists?(page_element)
@@ -21,7 +22,8 @@ module Hercules
         begin
           first_exists = element.exists?
         rescue Exception => e
-          raise Hercules::UptimeMonitor::UnknownPageElement.new(error: "Cannot find page element in this form: #{page_element.first.inspect}, you may use a css query form"), "Cannot find page element in this form: #{page_element.first.inspect}, you may use a css query form"
+          message = "Cannot find page element in this form: #{page_element.first.inspect}, you may use a css query form"
+          raise(Hercules::UptimeMonitor::UnknownPageElement.new(error: message), message)
         end
         if first_exists && !rest(page_element).empty?
           rest_exists?(element, rest(page_element))
@@ -36,7 +38,8 @@ module Hercules
           key, value = first.first
           @browser.send(key, value)
         else
-          raise Hercules::UptimeMonitor::InvalidPageElement.new(error: "Invalid page element #{first.inspect}"), "Invalid page element #{first.inspect}"
+          message = "Invalid page element #{first.inspect}"
+          raise(Hercules::UptimeMonitor::InvalidPageElement.new(error: message), message)
         end
       end
       def rest_exists?(element, array)
@@ -49,7 +52,8 @@ module Hercules
         elsif is_an_action?(array)
           apply_action?(element, array.first)
         else
-          raise Hercules::UptimeMonitor::InvalidRest.new(error: "Invalid options: #{array.inspect}"), "Invalid options: #{array.inspect}"
+          message = "Invalid options: #{array.inspect}"
+          raise(Hercules::UptimeMonitor::InvalidRest.new(error: message), message)
         end
       end
       def is_a_text?(text_array)
@@ -83,7 +87,8 @@ module Hercules
         elsif text_hash[:includes_text]
           assert_eq_text.include? text_hash[:includes_text]
         else
-          raise Hercules::UptimeMonitor::InvalidText.new(error: "Could not evaluate page_element text: #{text_hash.inspect}"), "Could not evaluate page_element text: #{text_hash.inspect}"
+          message = "Could not evaluate page_element text: #{text_hash.inspect}"
+          raise(Hercules::UptimeMonitor::InvalidText.new(error: message), message)
         end
       end
       def apply_action?(element, action)
@@ -93,7 +98,8 @@ module Hercules
           key, value = action.first
           element.send(key, value)
         else
-          raise Hercules::UptimeMonitor::InvalidAction.new(error: "Cannot apply action: #{action.inspect}"), "Cannot apply action: #{action.inspect}"
+          message = "Cannot apply action: #{action.inspect}"
+          raise(Hercules::UptimeMonitor::InvalidAction.new(error: message), message)
         end
         true
       end

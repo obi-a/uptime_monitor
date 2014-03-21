@@ -1,8 +1,8 @@
 uptime_monitor (Hercules)
 ==========================
-Using a real web browser, this plugin checks pages of a website at the specified time intervals, to ensure that the specified elements of the pages and features of the site are still working correctly.
-
 [![Build Status](https://travis-ci.org/obi-a/uptime_monitor.png?branch=master)](https://travis-ci.org/obi-a/uptime_monitor)
+
+Using a real web browser, this plugin checks pages of a website at the specified time intervals, to ensure that the specified elements of the pages and features of the site are still working correctly.
 
 ##Specification:
 
