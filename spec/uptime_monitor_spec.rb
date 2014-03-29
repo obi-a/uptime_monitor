@@ -7,11 +7,18 @@ describe Ragios::Plugin::UptimeMonitor do
   it "sets the correct test result for success" do
     @uptime_monitor.result!("page_element", state = true)
     @uptime_monitor.test_result.should == {"page_element" => :exists_as_expected}
-    @uptime_monitor.success.should == true
+    @uptime_monitor.success.should == nil #since no test_command? was run
   end
   it "sets the correct test result for failure" do
     @uptime_monitor.result!(:page_element, state = false)
     @uptime_monitor.test_result.should == {:page_element => :does_not_exist_as_expected}
+    @uptime_monitor.success.should == false
+  end
+  it "sets test_result as failure if any validation fails" do
+    @uptime_monitor.result!(:page_element, state = false)
+    @uptime_monitor.result!(:page_element, state = true)
+    @uptime_monitor.result!(:page_element, state = true)
+    @uptime_monitor.result!(:page_element, state = true)
     @uptime_monitor.success.should == false
   end
   it "must include a url" do
@@ -33,7 +40,7 @@ describe Ragios::Plugin::UptimeMonitor do
     page_element = [:title]
     @uptime_monitor.exists([page_element])
     @uptime_monitor.test_result.should == {page_element => :exists_as_expected}
-    @uptime_monitor.success.should == true
+    @uptime_monitor.success.should == nil #since no test_command? was run
     @uptime_monitor.close_browser
   end
   it "returns false if page element don't exists" do

@@ -46,7 +46,7 @@ module Ragios
       end
 
       def result!(page_element, state)
-        @success = state
+        @success = false if state == false
         result = state ? {page_element => :exists_as_expected} : {page_element => :does_not_exist_as_expected}
         @test_result.merge!(result)
       end
