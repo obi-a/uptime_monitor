@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "uptime_monitor"
-  s.version = "0.0.1"
+  s.version = "0.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["obi-a"]
-  s.date = "2014-03-22"
+  s.date = "2014-03-29"
   s.description = "Uses a real web browser to monitor a web app for uptime"
   s.email = "obioraakubue@yahoo.com"
   s.extra_rdoc_files = [
@@ -32,7 +32,8 @@ Gem::Specification.new do |s|
     "spec/browser_reader_spec.rb",
     "spec/browser_spec.rb",
     "spec/spec_helper.rb",
-    "spec/uptime_monitor_spec.rb"
+    "spec/uptime_monitor_spec.rb",
+    "uptime_monitor.gemspec"
   ]
   s.homepage = "http://github.com/obi-a/uptime_monitor"
   s.licenses = ["MIT"]
