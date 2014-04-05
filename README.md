@@ -2,7 +2,73 @@ uptime_monitor (Hercules)
 ==========================
 [![Build Status](https://travis-ci.org/obi-a/uptime_monitor.png?branch=master)](https://travis-ci.org/obi-a/uptime_monitor)
 
-Using a real web browser, this plugin checks pages of a website at the specified time intervals, to ensure that the specified elements of the pages and features of the site are still working correctly.
+Uptime_monitor is a [ragios](https://github.com/obi-a/ragios) plugin that uses a real web browser to perform transactions on a website to  ensure that features of the site are still working correctly. It can check elements of a webpage to ensure they still exist and it can also perform transactions like a website login to ensure that the process still works correctly.
+
+##Requirements
+[Ragios](https://github.com/obi-a/ragios)
+
+##Installation:
+ Add the uptime_monitor to your ragios Gemfile
+ ```ruby
+ gem "uptime_monitor"
+ ```
+Run bundle install from the ragios root directory
+ ```
+ bundle install
+ ```
+Restart ragios
+
+##usage:
+A quick example, to monitor the title tag of a web page to ensure that it hasn't changed. Using [Ragios ruby client](http://www.whisperservers.com/ragios/ragios-saint-ruby/using-ragios)
+````ruby
+monitor = {monitor: "My Blog title tag",
+            url: "http://obi-akubue.org",
+            every: "5m",
+            contact: "admin@obiora.com",
+            via: "gmail_notifier",
+            plugin: "uptime_monitor",
+            exists?: [
+                       [:title, [text: "Obi Akubue"]]
+                     ],
+            browser: ["firefox"]
+          }
+ragios.add [monitor]
+```
+The above example will create a ragios monitor that will, every 5 minutes, use firefox to visit the website url http://obi-akubue.org, and verify that the title tag on the page matches the text "Obi Akubue".
+
+###Using the plugin
+To use the uptime monitor plugin add the key/value pair to the monitor
+```
+plugin: "uptime_monitor"
+```
+
+###Browsers
+Browsers are added to the monitor using the browser key
+```
+browser: ["firefox"]
+```
+Supported browsers include Firefox, Chrome, Safari and Phantomjs. Other browsers can be specified as
+```
+browser: ["chrome"]
+browser: ["safari"]
+browser: ["phantomjs"]
+```
+uptime_monitor uses [Watir Webdriver](http://watirwebdriver.com), firefox runs out of the box with no configuration requried. To use Chrome or Safari see the Watir Webdriver documentation on downloading the appropriate driver binary and configuration.
+
+By default, the browsers don't run headless, to run the browser headless, you can specify it in the format below:
+```
+browser: ["firefox", headless: true]
+```
+This will run firefox as a headless browser. You should have [Xvfb](https://en.wikipedia.org/wiki/Xvfb) installed to run a non-headless browsers as headless. Headless browsers like Phantomjs don't require Xvfb.
+
+You can also specify headless as false
+```
+browser: ["firefox", headless: false]
+```
+The above example will run firefox as a non-headless browser.
+
+###Validations
+
 
 ##Specification:
 
