@@ -18,7 +18,7 @@ Jeweler::Tasks.new do |gem|
   gem.homepage = "http://github.com/obi-a/uptime_monitor"
   gem.license = "MIT"
   gem.summary = %Q{Real browser website uptime monitoring plugin for Ragios}
-  gem.description = %Q{Uses a real web browser to monitor a web app for uptime}
+  gem.description = %Q{A Ragios plugin that uses a real web browser to monitor transactions on a website for availability}
   gem.email = "obioraakubue@yahoo.com"
   gem.authors = ["obi-a"]
   # dependencies defined in Gemfile

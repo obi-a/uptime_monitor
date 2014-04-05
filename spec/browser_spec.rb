@@ -127,8 +127,12 @@ describe Hercules::UptimeMonitor::Browser do
     element = @browser.get_element({element: {css: '#rss-link'}})
     element.exists?.should ==  true
   end
+  it "can check if an element in string form exists" do
+    element = @browser.get_element("title")
+    element.exists?.should ==  true
+  end
   it "cannot check if an element exists if element has incorrect form" do
-    expect{@browser.get_element("something_else")}.to raise_error(Hercules::UptimeMonitor::InvalidPageElement)
+    expect{@browser.get_element(1)}.to raise_error(Hercules::UptimeMonitor::InvalidPageElement)
   end
   it "can check if a symbol form page element exists" do
     @browser.page_element_exists?([:title]).should == true

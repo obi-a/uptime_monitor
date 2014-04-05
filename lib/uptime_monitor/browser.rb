@@ -32,7 +32,8 @@ module Hercules
         end
       end
       def get_element(first)
-        if first.is_a? Symbol
+        if (first.is_a? Symbol) || (first.is_a? String)
+          first.to_sym
           @browser.send(first)
         elsif first.is_a? Hash
           key, value = first.first
