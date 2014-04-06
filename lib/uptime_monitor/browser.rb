@@ -22,7 +22,7 @@ module Hercules
         begin
           first_exists = element.exists?
         rescue Exception => e
-          message = "Cannot find page element in this form: #{page_element.first.inspect}, you may use a css query form"
+          message = "Cannot find page element in this form: #{page_element.first.inspect}, you may use a css selector form"
           raise(Hercules::UptimeMonitor::UnknownPageElement.new(error: message), message)
         end
         if first_exists && !rest(page_element).empty?
