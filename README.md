@@ -1,6 +1,7 @@
 uptime_monitor (Hercules)
 ==========================
 [![Build Status](https://travis-ci.org/obi-a/uptime_monitor.png?branch=master)](https://travis-ci.org/obi-a/uptime_monitor)
+[![Gem Version](https://badge.fury.io/rb/uptime_monitor.svg)](http://badge.fury.io/rb/uptime_monitor)
 
 Uptime_monitor is a [ragios](https://github.com/obi-a/ragios) plugin that uses a real web browser to perform transactions on a website to  ensure that features of the site are still working correctly. It can check elements of a webpage to ensure they still exist and it can also perform transactions like a website login to ensure that the process still works correctly.
 
@@ -34,7 +35,7 @@ monitor = {monitor: "My Blog title tag",
           }
 ragios.add [monitor]
 ```
-The above example will create a ragios monitor that will, every 5 minutes, use firefox to visit the website url http://obi-akubue.org, and verify that the title tag on the page matches the text "Obi Akubue".
+The above example will create a ragios monitor that will, every 5 minutes, use firefox to visit the website url http://obi-akubue.org, and verify that the title tag on the page matches the text "Obi Akubue". When the title tag doesn't match the text, a failure notification will be sent out to the contact.
 
 ###Using the plugin
 To use the uptime monitor plugin add the key/value pair to the monitor
@@ -43,7 +44,7 @@ plugin: "uptime_monitor"
 ```
 
 ###Browsers
-The browser to use is specified, by adding a browser key/value pair to the monitor
+A browser is specified, by adding a browser key/value pair to the monitor
 ```ruby
 browser: ["firefox"]
 ```
@@ -53,7 +54,7 @@ browser: ["chrome"]
 browser: ["safari"]
 browser: ["phantomjs"]
 ```
-uptime_monitor uses [Watir Webdriver](http://watirwebdriver.com), firefox runs out of the box with no configuration requried. To use Chrome or Safari see the Watir Webdriver documentation on downloading the appropriate driver binary and configuration.
+uptime_monitor uses [Watir Webdriver](http://watirwebdriver.com), firefox runs out of the box with no configuration required. To use Chrome or Safari see the Watir Webdriver documentation on downloading the appropriate driver binary and configuration.
 
 By default, the browsers don't run headless, to run the browser headless, you can specify it in the format below:
 ```ruby
@@ -112,7 +113,7 @@ Specifes a div with id="test" and class="test-section".
 
 Only standard attributes for an element can be included in the hash, for example a div can only include all or any of the following attributes id, class, lang, dir, title, align, onclick, ondblclick, onmousedown, onmouseup, onmouseover, onmousemove, onmouseout, onkeypress, onkeydown, onkeyup.
 
-Custom or data attributes cannot be included, for example to specify a div by data attributes, for example
+Custom or data attributes cannot be included, for example
 ```html
 <div data-brand="toyota">
 ```
@@ -139,13 +140,14 @@ To specify an element by data attributes
 Helpers are available to make some elements easier to reason about:
 
 #####Links
-An anchor tag could be specified by a link, this makes it more readable and easier to reason about
+An anchor tag could be specified with a link helper, this makes it more readable and easier to reason about.
+
 Using the anchor tag
 ```ruby
 [a: {text: "Click Here"}]
 ```
 
-More readble using helper
+More readble using a helper
 ```ruby
 [link: {text: "Click Here"}]
 ```
@@ -166,10 +168,10 @@ More readble using helper
 
 More readable than the input tag
 ```ruby
-[input: {id: "search", type: "text"}]
+[input: {id: "search"}]
 ```
 
-#####Checkbox
+#####Checkboxes
 ```ruby
 [checkbox: {value: "Butter"}]
 ```
@@ -178,7 +180,7 @@ More readable than the input tag
 [radio: {name: "group1", value: "Milk"}]
 ```
 
-######Drop Down menus
+#####Drop Down menus
 ```html
 <select name="mydropdown">
 <option value="Milk">Fresh Milk</option>
@@ -201,7 +203,23 @@ Options of the drop-down menu can be specified using option
 [option: {value: "Milk"}]
 ```
 
+
 ####Text Validations
+
+...
+
+####Actions
+...
+
+####Waiting
+...
+
+####Multiple validations and actions
+explain how it works multiple validations
+
+
+####Performing Transactions
+...
 
 ... more documentation coming soon
 
