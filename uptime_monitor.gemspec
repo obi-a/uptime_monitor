@@ -5,12 +5,12 @@
 
 Gem::Specification.new do |s|
   s.name = "uptime_monitor"
-  s.version = "0.0.2"
+  s.version = "0.0.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["obi-a"]
-  s.date = "2014-03-29"
-  s.description = "Uses a real web browser to monitor a web app for uptime"
+  s.date = "2014-04-06"
+  s.description = "A Ragios plugin that uses a real web browser to monitor transactions on a website for availability"
   s.email = "obioraakubue@yahoo.com"
   s.extra_rdoc_files = [
     "LICENSE",
