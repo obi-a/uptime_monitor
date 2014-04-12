@@ -203,19 +203,94 @@ Options of the drop-down menu can be specified using option
 [option: {value: "Milk"}]
 ```
 
-
 ####Text Validations
-
-...
+A text validation is used to verify that the text content of a html element hasn't changed. For example,
+```ruby
+exists?: [
+           [:title, [text: "Welcome to my site"]]
+         ]
+```
+The above example first verifies that a title tag exists on the page, then it verifies that title tag text is equal to "Welcome to my site".
+The following is a text validation:
+```ruby
+[text: "Welcome to my site"]
+```
+Text validations can also verify that the html element's text includes the provided string, in the format below:
+```ruby
+exists?: [
+           [:title, [includes_text: "Welcome"]]
+         ]
+```
+The above example verifies that the title tag's text includes the string "Welcome".
+Another example, to verify that a div with class="box_content" includes the string "SouthMunn is a Website"
+```ruby
+exists?: [
+           [{div: {class: "box_content"}}, [includes_text: "SouthMunn is a Website"]]
+         ]
+```
+Text validations can be used on html elements that can contain text namely title, div, and span.
 
 ####Actions
-...
+Validations can also include actions. The actions are performed on the html elements. Example to set a text field value
+```ruby
+exists?: [
+            [{text_field: {id: "username"}}, [set: "admin"]]
+         ]
+```
+The above example will set the text field's value to the string "admin".
+The following is an action
+```ruby
+[set: "admin"]
+```
+#####Actions on html elements
+Common actions performed on elements are set, select and click.
 
+Set value for a textfield or textarea.
+```ruby
+ [{text_field: {name: "q"}}, [set: "ruby"]]
+ [{text_field: {name: "longtext"}}, [set: "In a world..."]]
+```
+Select an option from a drop down menu
+```html
+<select name="mydropdown">
+<option value="Milk">Fresh Milk</option>
+<option value="Cheese">Old Cheese</option>
+<option value="Bread">Hot Bread</option>
+</select>
+```
+```ruby
+[{select_list: {name: "mydropdown"}},[select: "Old Cheese"]]
+
+```
+Click a radio button, checkbox, link or button
+```ruby
+[{radio: {name: "group1", value: "Milk"}}, [:click]]
+[{checkbox:{name: "checkbox"}}, [:click]]
+[{link: {text: "Click Here"}}, [:click]]
+[{button: {id: "submit"}}, [:click]]
+
+```
 ####Waiting
-...
+For webpages that use a lot of AJAX it's possible to wait until an element exists, by using the wait_until_exists? key. This key takes an element as value. It is a special type of validation, it will wait for 30 seconds for the provided element to exist, if the element doesn't exist in 30 seconds the validation fails.
+```ruby
+[wait_until_exists?: [div: {id:"open-section"}]]
+```
+The above example will wait 30 seconds until the div exists, if it doesn't exist after 30 seconds the validation will fail.
 
 ####Multiple validations and actions
-explain how it works multiple validations
+```ruby
+exists?: [
+            [{text_field: {id: "username"}}, [set: "admin"]],
+            [{text_field: {id: "password"}}, [set: "pass"]],
+            [:button, [:click]],
+            [:title, [includes_text: "Dashboard"]]
+         ]
+```
+With multiple validations like the example above, the monitor will run the validations, line by line, from top to bottom. When it meets an action it will apply it on the element in the validation. The monitor fails it's test if any of the validation fails. So for the monitor to pass, all validations must pass.
+
+When actions like clicking a link, changes the current page, the following validations will be performed on the new page.
+
+A combination of multiple validations and actions form basis for performing transactions.
 
 
 ####Performing Transactions
@@ -313,5 +388,3 @@ u.test_result
 #      "https://fc03.deviantart.net/fs14/f/2007/047/f/2/Street_Addiction_by_gizmodus.jpg"}}]=>
 #  :does_not_exist_as_expected}
 </pre>
-
-###More details coming soon
