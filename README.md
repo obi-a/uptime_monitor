@@ -76,7 +76,7 @@ exists?: [
            [:div]
          ]
 ```
-The above example will verify that an h1 and a div exists on the page.
+The above example will verify that a h1 and a div exists on the page.
 
 ####HTML Elements
 The simplest way to specify a html element is using a symbol.
@@ -228,10 +228,10 @@ exists?: [
            [{div: {class: "box_content"}}, [includes_text: "SouthMunn is a Website"]]
          ]
 ```
-Text validations can be used on html elements that can contain text namely title, div, and span.
+Text validations can be used on html elements that can contain text like title, div, span, h1, h2 etc.
 
 ####Actions
-Validations can also include actions. The actions are performed on the html elements. Example to set a text field value
+Validations can also include actions. The actions are performed on the html element after it is validated. Example to set a text field's value
 ```ruby
 exists?: [
             [{text_field: {id: "username"}}, [set: "admin"]]
@@ -248,7 +248,7 @@ Common actions performed on elements are set, select and click.
 Set value for a textfield or textarea.
 ```ruby
  [{text_field: {name: "q"}}, [set: "ruby"]]
- [{text_field: {name: "longtext"}}, [set: "In a world..."]]
+ [{text_area: {name: "longtext"}}, [set: "In a world..."]]
 ```
 Select an option from a drop down menu
 ```html
@@ -260,7 +260,6 @@ Select an option from a drop down menu
 ```
 ```ruby
 [{select_list: {name: "mydropdown"}},[select: "Old Cheese"]]
-
 ```
 Click a radio button, checkbox, link or button
 ```ruby
@@ -268,10 +267,9 @@ Click a radio button, checkbox, link or button
 [{checkbox:{name: "checkbox"}}, [:click]]
 [{link: {text: "Click Here"}}, [:click]]
 [{button: {id: "submit"}}, [:click]]
-
 ```
 ####Waiting
-For webpages that use a lot of AJAX it's possible to wait until an element exists, by using the wait_until_exists? key. This key takes an element as value. It is a special type of validation, it will wait for 30 seconds for the provided element to exist, if the element doesn't exist in 30 seconds the validation fails.
+For webpages that use a lot of AJAX, it's possible to wait until an element exists, by using the wait_until_exists? key. This key takes an element as value. It is a special type of validation, it will wait for 30 seconds for the provided element to exist, if the element doesn't exist in 30 seconds the validation fails.
 ```ruby
 [wait_until_exists?: [div: {id:"open-section"}]]
 ```
@@ -290,43 +288,35 @@ With multiple validations like the example above, the monitor will run the valid
 
 When actions like clicking a link, changes the current page, the following validations will be performed on the new page.
 
-A combination of multiple validations and actions form basis for performing transactions.
+A combination of multiple validations and actions form the basis for performing transactions.
 
 
 ####Performing Transactions
-...
+Transactions are achieved by a combination of multiple validations and actions.
 
-... more documentation coming soon
-
-##Specification:
-
-<pre lang="ruby">
-monitor = {monitor: "My Website",
-            url: "http://mysite.com",
-            every: "5m",
-            contact: "admin@mail.com",
-            via: "email_notifier",
+To monitor the keyword search feature on my blog:
+```ruby
+monitor = {monitor: "My Blog: keyword search",
+            url: "http://obi-akubue.org",
+            every: "1h",
+            contact: "admin@obiora.com",
+            via: "gmail_notifier",
             plugin: "uptime_monitor",
             exists?: [
-                        [:title, [text: "Welcome to my site"]],
-                        [{div: {id:"test", class: "test-section"}}, [text: "this is a test"]],
-                        [a: {href: "/aboutus" }],
-                        [:h1],
-                        [:h2,[text: "Login"]],
-                        [form: {action: "/signup", method: "get"}],
-                        [{element: {css: "#submit-button"}}, [:click]],
-                        [{text_field: {id: "username"}}, [set: "admin"]],
-                        [{text_field: {id: "password"}}, [set: "pass"]],
-                        [link: {text: "Contact Us"}],
-                        [wait_until_exists?: [div: {id:"open-section"}]]
+                       [:title,[text: "Obi Akubue"]],
+                       [{text_field: {id: "s"}}, [set: "ruby"]],
+                       [{button:{id: "searchsubmit"}}, [:click]],
+                       [:title, [includes_text: "ruby"], [includes_text: "Search Results"]],
+                       [{h2:{class: "pagetitle"}},[includes_text: "Search results for"]]
                      ],
-            browser: ["firefox", headless: true]
+            browser: ["firefox"]
           }
 ragios.add [monitor]
-</pre>
+```
+In the above example the monitor will visit "http://obi-akubue.org" every hour, and perform a search for keyword 'ruby', then confirm that the search works by checking that the title tag and h2 tag of the search results page contains the expected text.
 
-###Monitor login process of a real site
-<pre lang="ruby">
+Another example, to monitor the login process of the website southmunn.com
+```ruby
 login_process = [
                     [:title, [text: "Website Uptime Monitoring | SouthMunn.com"]],
                     [{link: {text:"Login"}}, [:click]],
@@ -337,20 +327,23 @@ login_process = [
                     [:title, [text: "Dashboard - Website Uptime Monitoring | SouthMunn.com"]]
                 ]
 
-monitor = {monitor: "My Website",
+monitor = {monitor: "My Website login processs",
             url: "https:/southmunn.com",
-            every: "5m",
-            contact: "admin@mail.com",
+            every: "1h",
+            contact: "admin@obiora.com",
             via: "email_notifier",
             plugin: "uptime_monitor",
             exists?: login_process,
             browser: ["firefox", headless: true]
           }
 ragios.add [monitor]
-</pre>
+```
 
-###Real site test:
-<pre lang="ruby">
+####Testing the validations outside Ragios
+Sometimes it's useful to run validations outside Ragios to verify that the validations are syntactically correct and don't raise any exceptions. This is best done by running the uptime_monitor plugin as a Plain Old Ruby Object.
+```ruby
+require 'uptime_monitor'
+
 monitor = {monitor: "About Us page",
             url: "https://www.southmunn.com/aboutus",
             browser: ["firefox", headless: false],
@@ -361,7 +354,7 @@ monitor = {monitor: "About Us page",
           }
 
 u = Ragios::Plugin::UptimeMonitor.new
-u.init monitor
+u.init(monitor)
 u.test_command?
 #=> true
 u.test_result
@@ -387,4 +380,58 @@ u.test_result
 #    {:src=>
 #      "https://fc03.deviantart.net/fs14/f/2007/047/f/2/Street_Addiction_by_gizmodus.jpg"}}]=>
 #  :does_not_exist_as_expected}
+```
+In the above example the test_command?() method runs all validations and returns true when all validations passes, returns false when any of the validation fails. test_result is a hash that contains the result of the tests ran by test_command?().
+
+####Testing individual validations
+It can be very useful to test validations individually before adding them to Ragios. This can be done by running plugin's browser object directly.
+```ruby
+require 'uptime_monitor'
+
+url= "http://obi-akubue.org"
+headless = false
+browser_name = "firefox"
+browser = Hercules::UptimeMonitor::Browser.new(url, browser_name, headless)
+
+browser.exists? [:title, [includes_text: "ruby"]]
+
+browser.exists? [{h2:{class: "pagetitle"}}]
+
+browser.exists? [{checkbox:{name: "checkbox"}}, [:click]]
+
+browser.close
+```
+The above example creates a browser object and visits the url. The exists? method takes a single validation as arguement and performs the validation on the url, it returns true if the validation passes and returns false if the validation fails. In the first validation it checks if the title tag on the url includes the text 'ruby'.
+
+
+##Specification:
+<pre lang="ruby">
+monitor = {monitor: "My Website",
+            url: "http://mysite.com",
+            every: "5m",
+            contact: "admin@obiora.com",
+            via: "mail_notifier",
+            plugin: "uptime_monitor",
+            exists?: [
+                        [:title, [text: "Welcome to my site"]],
+                        [{div: {id:"test", class: "test-section"}}, [text: "this is a test"]],
+                        [a: {href: "/aboutus" }],
+                        [:h1],
+                        [:h2,[text: "Login"]],
+                        [form: {action: "/signup", method: "get"}],
+                        [{element: {css: "#submit-button"}}, [:click]],
+                        [{text_field: {id: "username"}}, [set: "admin"]],
+                        [{text_field: {id: "password"}}, [set: "pass"]],
+                        [link: {text: "Contact Us"}],
+                        [wait_until_exists?: [div: {id:"open-section"}]]
+                     ],
+            browser: ["firefox", headless: true]
+          }
+ragios.add [monitor]
 </pre>
+
+
+##License:
+MIT License.
+
+Copyright (c) 2014 Obi Akubue, obi-akubue.org
