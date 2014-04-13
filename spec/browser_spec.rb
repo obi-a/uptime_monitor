@@ -37,8 +37,9 @@ describe Hercules::UptimeMonitor::Browser do
   it "cannot apply action in wrong form" do
     element = @browser.get_element({text_field: {id: "s"}})
     element.exists?.should ==  true
-    expect{@browser.apply_action?(element, "wrong form action")}.to raise_error(Hercules::UptimeMonitor::InvalidAction)
+    expect{@browser.apply_action?(element, 1)}.to raise_error(Hercules::UptimeMonitor::InvalidAction)
   end
+
   it "returns true for matching text form" do
    @browser.apply_text?("hello world", {text: "hello world"}).should == true
   end
@@ -65,9 +66,12 @@ describe Hercules::UptimeMonitor::Browser do
     @browser.is_an_action?([set: "admin"]).should == true
     @browser.is_an_action?([:click]).should == true
   end
+  it "can detect actions in string form" do
+    @browser.is_an_action?(["click"]).should == true
+  end
   it "can detect invalid action form" do
     @browser.is_an_action?("something_else").should == false
-    @browser.is_an_action?(["something_else"]).should == false
+    @browser.is_an_action?([1]).should == false
   end
   it "can detect valid text form" do
     @browser.is_a_text?([{text: "hello world"}]).should == true

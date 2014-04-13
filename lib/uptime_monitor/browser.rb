@@ -33,8 +33,7 @@ module Hercules
       end
       def get_element(first)
         if (first.is_a? Symbol) || (first.is_a? String)
-          first.to_sym
-          @browser.send(first)
+          @browser.send(first.to_sym)
         elsif first.is_a? Hash
           key, value = first.first
           @browser.send(key, value)
@@ -71,7 +70,7 @@ module Hercules
       end
       def is_an_action?(array)
         if array.is_a? Array
-          if array.first.is_a?(Symbol) || array.first.is_a?(Hash)
+          if array.first.is_a?(Symbol) || array.first.is_a?(Hash) || array.first.is_a?(String)
             return true
           end
         end
@@ -93,8 +92,8 @@ module Hercules
         end
       end
       def apply_action?(element, action)
-        if action.is_a? Symbol
-          element.send(action)
+        if action.is_a?(Symbol) || action.is_a?(String)
+          element.send(action.to_sym)
         elsif action.is_a? Hash
           key, value = action.first
           element.send(key, value)
