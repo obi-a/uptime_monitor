@@ -231,7 +231,7 @@ exists?: [
 Text validations can be used on html elements that can contain text like title, div, span, h1, h2 etc.
 
 ####Actions
-Validations can also include actions. The actions are performed on the html element after it is validated. Example to set a text field's value
+Validations can also include actions. The actions are performed on the html element after it is verfied that the element exists. Example to set a text field's value
 ```ruby
 exists?: [
             [{text_field: {id: "username"}}, [set: "admin"]]
@@ -315,7 +315,43 @@ ragios.add [monitor]
 ```
 In the above example the monitor will visit "http://obi-akubue.org" every hour, and perform a search for keyword 'ruby', then confirm that the search works by checking that the title tag and h2 tag of the search results page contains the expected text.
 
-Another example, to monitor the login process of the website southmunn.com
+Another example, to search my friend's ecommerce site http://akross.net, for a citizen brand wristwatch, add one to cart, and go to the checkout page.
+
+This transaction verifies the the following about the site:
+
+1. Product search is working
+
+2. Add to cart works
+
+3. Checkout page is reachable
+
+4. All three above works together as a sequence
+
+```ruby
+monitor = {monitor: "Akross.net: Add citizen watch to cart and checkout",
+            url: "http://akross.net",
+            every: "1h",
+            contact: "admin@obiora.com",
+            via: "ses",
+            plugin: "uptime_monitor",
+            exists?: [
+                       [:title, [text: "All Watches Shop, Authentic Watches at Akross"]],
+                       [{text_field: {name: "filter_name"}}, [set: "citizen"]],
+                       [{div: {class: "button-search"}}, [:click]],
+                       [:title,[text: "Search"]],
+                       [link: {text: "Search"}],
+                       [{button: {value: "Add to Cart"}}, [:click]],
+                       [{link: {text: "Checkout"}}, [:click]],
+                       [:title, [text: "Checkout"]]
+                     ],
+            browser: ["phantomjs"]
+          }
+
+ragios.add [monitor]
+```
+
+
+Another example, to monitor the login process of the website http://southmunn.com
 ```ruby
 login_process = [
                     [:title, [text: "Website Uptime Monitoring | SouthMunn.com"]],
