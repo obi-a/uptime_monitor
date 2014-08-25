@@ -33,7 +33,7 @@ monitor = {monitor: "My Blog title tag",
                      ],
             browser: ["firefox"]
           }
-ragios.add [monitor]
+ragios.add(monitor)
 ```
 The above example will create a ragios monitor that will, every 5 minutes, use firefox to visit the website url http://obi-akubue.org, and verify that the title tag on the page matches the text "Obi Akubue". When the title tag doesn't match the text, a failure notification will be sent out to the contact.
 
@@ -311,7 +311,7 @@ monitor = {monitor: "My Blog: keyword search",
                      ],
             browser: ["firefox"]
           }
-ragios.add [monitor]
+ragios.add(monitor)
 ```
 In the above example the monitor will visit "http://obi-akubue.org" every hour, and perform a search for keyword 'ruby', then confirm that the search works by checking that the title tag and h2 tag of the search results page contains the expected text.
 
@@ -347,7 +347,7 @@ monitor = {monitor: "Akross.net: Add citizen watch to cart and checkout",
             browser: ["phantomjs"]
           }
 
-ragios.add [monitor]
+ragios.add(monitor)
 ```
 
 
@@ -372,7 +372,7 @@ monitor = {monitor: "My Website login processs",
             exists?: login_process,
             browser: ["firefox", headless: true]
           }
-ragios.add [monitor]
+ragios.add(monitor)
 ```
 
 ####Testing the validations outside Ragios
@@ -463,7 +463,7 @@ monitor = {monitor: "My Website",
                      ],
             browser: ["firefox", headless: true]
           }
-ragios.add [monitor]
+ragios.add(monitor)
 </pre>
 
 
