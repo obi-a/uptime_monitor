@@ -294,7 +294,7 @@ A combination of multiple validations and actions form the basis for performing 
 ####Performing Transactions
 Transactions are achieved by a combination of multiple validations and actions.
 
-To monitor the keyword search feature on my blog:
+Example, to monitor the keyword search feature on my blog, notice the validations in the exists? key's value:
 ```ruby
 monitor = {monitor: "My Blog: keyword search",
             url: "http://obi-akubue.org",
