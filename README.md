@@ -3,7 +3,7 @@ uptime_monitor (Hercules)
 [![Build Status](https://travis-ci.org/obi-a/uptime_monitor.png?branch=master)](https://travis-ci.org/obi-a/uptime_monitor)
 [![Gem Version](https://badge.fury.io/rb/uptime_monitor.svg)](http://badge.fury.io/rb/uptime_monitor)
 
-Uptime_monitor is a [ragios](https://github.com/obi-a/ragios) plugin that uses a real web browser to perform transactions on a website to  ensure that features of the site are still working correctly. It can check elements of a webpage to ensure they still exist and it can also perform transactions like a website login to ensure that the process still works correctly.
+Uptime_monitor is a [ragios](https://github.com/obi-a/ragios) plugin that uses a real web browser to perform transactions on a web application to  ensure that features of the app are still working correctly. It can check elements of a webpage to ensure they still exist and it can also perform transactions like a website login to ensure that the process still works correctly.
 
 ##Requirements
 [Ragios](https://github.com/obi-a/ragios)
@@ -22,17 +22,18 @@ Restart ragios
 ##usage:
 A quick example, to monitor the title tag of a web page to ensure that it hasn't changed. Using [Ragios ruby client](http://www.whisperservers.com/ragios/ragios-saint-ruby/using-ragios)
 ````ruby
-monitor = {monitor: "My Blog title tag",
-            url: "http://obi-akubue.org",
-            every: "5m",
-            contact: "admin@obiora.com",
-            via: "gmail_notifier",
-            plugin: "uptime_monitor",
-            exists?: [
-                       [:title, [text: "Obi Akubue"]]
-                     ],
-            browser: ["firefox"]
-          }
+monitor = {
+  monitor: "My Blog title tag",
+  url: "http://obi-akubue.org",
+  every: "5m",
+  contact: "admin@obiora.com",
+  via: "gmail_notifier",
+  plugin: "uptime_monitor",
+  exists?: [
+             [:title, [text: "Obi Akubue"]]
+           ],
+  browser: ["firefox"]
+}
 ragios.add(monitor)
 ```
 The above example will create a ragios monitor that will, every 5 minutes, use firefox to visit the website url http://obi-akubue.org, and verify that the title tag on the page matches the text "Obi Akubue". When the title tag doesn't match the text, a failure notification will be sent out to the contact.
@@ -296,21 +297,22 @@ Transactions are achieved by a combination of multiple validations and actions.
 
 Example, to monitor the keyword search feature on my blog, notice the validations in the exists? key's value:
 ```ruby
-monitor = {monitor: "My Blog: keyword search",
-            url: "http://obi-akubue.org",
-            every: "1h",
-            contact: "admin@obiora.com",
-            via: "gmail_notifier",
-            plugin: "uptime_monitor",
-            exists?: [
-                       [:title,[text: "Obi Akubue"]],
-                       [{text_field: {id: "s"}}, [set: "ruby"]],
-                       [{button:{id: "searchsubmit"}}, [:click]],
-                       [:title, [includes_text: "ruby"], [includes_text: "Search Results"]],
-                       [{h2:{class: "pagetitle"}},[includes_text: "Search results for"]]
-                     ],
-            browser: ["firefox"]
-          }
+monitor = {
+  monitor: "My Blog: keyword search",
+  url: "http://obi-akubue.org",
+  every: "1h",
+  contact: "admin@obiora.com",
+  via: "gmail_notifier",
+  plugin: "uptime_monitor",
+  exists?: [
+             [:title,[text: "Obi Akubue"]],
+             [{text_field: {id: "s"}}, [set: "ruby"]],
+             [{button:{id: "searchsubmit"}}, [:click]],
+             [:title, [includes_text: "ruby"], [includes_text: "Search Results"]],
+             [{h2:{class: "pagetitle"}},[includes_text: "Search results for"]]
+           ],
+  browser: ["firefox"]
+}
 ragios.add(monitor)
 ```
 In the above example the monitor will visit "http://obi-akubue.org" every hour, and perform a search for keyword 'ruby', then confirm that the search works by checking that the title tag and h2 tag of the search results page contains the expected text.
@@ -328,24 +330,25 @@ This transaction verifies the the following about the site:
 4. All three above works together as a sequence
 
 ```ruby
-monitor = {monitor: "Akross.net: Add citizen watch to cart and checkout",
-            url: "http://akross.net",
-            every: "1h",
-            contact: "admin@obiora.com",
-            via: "ses",
-            plugin: "uptime_monitor",
-            exists?: [
-                       [:title, [text: "All Watches Shop, Authentic Watches at Akross"]],
-                       [{text_field: {name: "filter_name"}}, [set: "citizen"]],
-                       [{div: {class: "button-search"}}, [:click]],
-                       [:title,[text: "Search"]],
-                       [link: {text: "Search"}],
-                       [{button: {value: "Add to Cart"}}, [:click]],
-                       [{link: {text: "Checkout"}}, [:click]],
-                       [:title, [text: "Checkout"]]
-                     ],
-            browser: ["phantomjs"]
-          }
+monitor = {
+  monitor: "Akross.net: Add citizen watch to cart and checkout",
+  url: "http://akross.net",
+  every: "1h",
+  contact: "admin@obiora.com",
+  via: "ses",
+  plugin: "uptime_monitor",
+  exists?: [
+             [:title, [text: "All Watches Shop, Authentic Watches at Akross"]],
+             [{text_field: {name: "filter_name"}}, [set: "citizen"]],
+             [{div: {class: "button-search"}}, [:click]],
+             [:title,[text: "Search"]],
+             [link: {text: "Search"}],
+             [{button: {value: "Add to Cart"}}, [:click]],
+             [{link: {text: "Checkout"}}, [:click]],
+             [:title, [text: "Checkout"]]
+           ],
+  browser: ["phantomjs"]
+}
 
 ragios.add(monitor)
 ```
@@ -354,24 +357,25 @@ ragios.add(monitor)
 Another example, to monitor the login process of the website http://southmunn.com
 ```ruby
 login_process = [
-                    [:title, [text: "Website Uptime Monitoring | SouthMunn.com"]],
-                    [{link: {text:"Login"}}, [:click]],
-                    [:title, [text: "Sign in - Website Uptime Monitoring | SouthMunn.com"]],
-                    [{text_field: {id: "username"}}, [set: "admin"]],
-                    [{text_field: {id: "password"}}, [set: "pass"]],
-                    [:button, [:click]],
-                    [:title, [text: "Dashboard - Website Uptime Monitoring | SouthMunn.com"]]
-                ]
+  [:title, [text: "Website Uptime Monitoring | SouthMunn.com"]],
+  [{link: {text:"Login"}}, [:click]],
+  [:title, [text: "Sign in - Website Uptime Monitoring | SouthMunn.com"]],
+  [{text_field: {id: "username"}}, [set: "admin"]],
+  [{text_field: {id: "password"}}, [set: "pass"]],
+  [:button, [:click]],
+  [:title, [text: "Dashboard - Website Uptime Monitoring | SouthMunn.com"]]
+]
 
-monitor = {monitor: "My Website login processs",
-            url: "https:/southmunn.com",
-            every: "1h",
-            contact: "admin@obiora.com",
-            via: "email_notifier",
-            plugin: "uptime_monitor",
-            exists?: login_process,
-            browser: ["firefox", headless: true]
-          }
+monitor = {
+  monitor: "My Website login processs",
+  url: "https:/southmunn.com",
+  every: "1h",
+  contact: "admin@obiora.com",
+  via: "email_notifier",
+  plugin: "uptime_monitor",
+  exists?: login_process,
+  browser: ["firefox", headless: true]
+}
 ragios.add(monitor)
 ```
 
@@ -380,14 +384,15 @@ Sometimes it's useful to run validations outside Ragios to verify that the valid
 ```ruby
 require 'uptime_monitor'
 
-monitor = {monitor: "About Us page",
-            url: "https://www.southmunn.com/aboutus",
-            browser: ["firefox", headless: false],
-            exists?: [
-                        [{div: {class: "box_content"}}, [includes_text: "SouthMunn is a Website Uptime Monitoring SASS created and maintained by"]],
-                        [img: {src: "https://fc03.deviantart.net/fs14/f/2007/047/f/2/Street_Addiction_by_gizmodus.jpg"}],
-                     ],
-          }
+monitor = {
+  monitor: "About Us page",
+  url: "https://www.southmunn.com/aboutus",
+  browser: ["firefox", headless: false],
+  exists?: [
+              [{div: {class: "box_content"}}, [includes_text: "SouthMunn is a Website Uptime Monitoring SASS created and maintained by"]],
+              [img: {src: "https://fc03.deviantart.net/fs14/f/2007/047/f/2/Street_Addiction_by_gizmodus.jpg"}],
+           ],
+}
 
 u = Ragios::Plugin::UptimeMonitor.new
 u.init(monitor)
@@ -442,27 +447,28 @@ The above example creates a browser object and visits the url. The exists? metho
 
 ##Specification:
 <pre lang="ruby">
-monitor = {monitor: "My Website",
-            url: "http://mysite.com",
-            every: "5m",
-            contact: "admin@obiora.com",
-            via: "mail_notifier",
-            plugin: "uptime_monitor",
-            exists?: [
-                        [:title, [text: "Welcome to my site"]],
-                        [{div: {id:"test", class: "test-section"}}, [text: "this is a test"]],
-                        [a: {href: "/aboutus" }],
-                        [:h1],
-                        [:h2,[text: "Login"]],
-                        [form: {action: "/signup", method: "get"}],
-                        [{element: {css: "#submit-button"}}, [:click]],
-                        [{text_field: {id: "username"}}, [set: "admin"]],
-                        [{text_field: {id: "password"}}, [set: "pass"]],
-                        [link: {text: "Contact Us"}],
-                        [wait_until_exists?: [div: {id:"open-section"}]]
-                     ],
-            browser: ["firefox", headless: true]
-          }
+monitor = {
+  monitor: "My Website",
+  url: "http://mysite.com",
+  every: "5m",
+  contact: "admin@obiora.com",
+  via: "mail_notifier",
+  plugin: "uptime_monitor",
+  exists?: [
+              [:title, [text: "Welcome to my site"]],
+              [{div: {id:"test", class: "test-section"}}, [text: "this is a test"]],
+              [a: {href: "/aboutus" }],
+              [:h1],
+              [:h2,[text: "Login"]],
+              [form: {action: "/signup", method: "get"}],
+              [{element: {css: "#submit-button"}}, [:click]],
+              [{text_field: {id: "username"}}, [set: "admin"]],
+              [{text_field: {id: "password"}}, [set: "pass"]],
+              [link: {text: "Contact Us"}],
+              [wait_until_exists?: [div: {id:"open-section"}]]
+           ],
+  browser: ["firefox", headless: true]
+}
 ragios.add(monitor)
 </pre>
 
