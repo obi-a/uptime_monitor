@@ -32,7 +32,7 @@ module Ragios
       end
 
       def close_browser
-        @browser.close
+        @browser.close if @browser.respond_to?('close')
       end
 
       def start_browser(url, browser_name, headless)
