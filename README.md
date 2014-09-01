@@ -3,7 +3,7 @@ uptime_monitor (Hercules)
 [![Build Status](https://travis-ci.org/obi-a/uptime_monitor.png?branch=master)](https://travis-ci.org/obi-a/uptime_monitor)
 [![Gem Version](https://badge.fury.io/rb/uptime_monitor.svg)](http://badge.fury.io/rb/uptime_monitor)
 
-Uptime_monitor is a [ragios](https://github.com/obi-a/ragios) plugin that uses a real web browser to perform transactions on a web application to  ensure that features of the app are still working correctly. It can check elements of a webpage to ensure they still exist and it can also perform transactions like a website login to ensure that the process still works correctly.
+Uptime_monitor is a [ragios](https://github.com/obi-a/ragios) plugin that uses a real web browser to perform transactions on a website to ensure that features of the site are still working correctly. It can check elements of a webpage to ensure they still exist and it can also perform transactions like a website login to ensure that the process still works correctly.
 
 ##Requirements
 [Ragios](https://github.com/obi-a/ragios)
