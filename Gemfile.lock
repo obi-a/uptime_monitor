@@ -10,13 +10,13 @@ GEM
     addressable (2.3.5)
     atomic (1.1.14)
     builder (3.2.2)
-    childprocess (0.4.0)
+    childprocess (0.5.5)
       ffi (~> 1.0, >= 1.0.11)
     coderay (1.1.0)
     diff-lcs (1.2.4)
     faraday (0.8.8)
       multipart-post (~> 1.2.0)
-    ffi (1.9.3)
+    ffi (1.9.6)
     git (1.2.6)
     github_api (0.10.1)
       addressable
@@ -26,7 +26,7 @@ GEM
       nokogiri (~> 1.5.2)
       oauth2
     hashie (2.0.5)
-    headless (1.0.1)
+    headless (1.0.2)
     highline (1.6.20)
     httpauth (0.2.0)
     i18n (0.6.9)
@@ -71,21 +71,22 @@ GEM
     rspec-expectations (2.14.3)
       diff-lcs (>= 1.1.3, < 2.0)
     rspec-mocks (2.14.4)
-    rubyzip (1.1.0)
-    selenium-webdriver (2.39.0)
-      childprocess (>= 0.2.5)
+    rubyzip (1.1.6)
+    selenium-webdriver (2.44.0)
+      childprocess (~> 0.5)
       multi_json (~> 1.0)
       rubyzip (~> 1.0)
-      websocket (~> 1.0.4)
+      websocket (~> 1.0)
     slop (3.4.7)
     thread_safe (0.1.3)
       atomic
     tzinfo (0.3.38)
-    watir-webdriver (0.6.6)
+    watir-webdriver (0.6.11)
       selenium-webdriver (>= 2.18.0)
-    watir-webdriver-performance (0.2.3)
+    watir-webdriver-performance (0.2.4)
       watir-webdriver
-    websocket (1.0.7)
+      watir-webdriver
+    websocket (1.2.1)
 
 PLATFORMS
   ruby
@@ -93,10 +94,10 @@ PLATFORMS
 DEPENDENCIES
   activesupport
   bundler (~> 1.0)
-  headless
+  headless (~> 1.0.2)
   jeweler (~> 1.8.7)
   pry
   rdoc (~> 3.12)
   rspec
-  watir-webdriver
-  watir-webdriver-performance
+  watir-webdriver (~> 0.6.11)
+  watir-webdriver-performance (~> 0.2.4)

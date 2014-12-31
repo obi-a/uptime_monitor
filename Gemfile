@@ -2,9 +2,9 @@ source "http://rubygems.org"
 # Add dependencies required to use your gem here.
 # Example:
 #   gem "activesupport", ">= 2.3.5"
-gem 'headless'
-gem 'watir-webdriver'
-gem 'watir-webdriver-performance'
+gem 'headless', "~> 1.0.2"
+gem 'watir-webdriver', "~> 0.6.11"
+gem 'watir-webdriver-performance', "~> 0.2.4"
 gem 'activesupport'
 
 # Add dependencies to develop your gem here.
