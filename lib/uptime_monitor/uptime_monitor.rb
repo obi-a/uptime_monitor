@@ -7,6 +7,9 @@ module Ragios
 
       def initialize
         @test_result = ActiveSupport::OrderedHash.new
+        Retriable.configure do |c|
+          c.tries = 6
+        end
       end
 
       def init(monitor)
@@ -20,12 +23,18 @@ module Ragios
       end
 
       def test_command?
-        @success = true
-        browser_reader = Hercules::UptimeMonitor::BrowserReader.new(@monitor.browser)
-        start_browser(@monitor.url, browser_reader.browser_name, browser_reader.headless)
-        exists(@monitor.exists?)
-        close_browser
-        @success
+        do_this_on_each_retry = Proc.new do |exception, try, elapsed_time, next_interval|
+          log "#{exception.class}: '#{exception.message}' - #{try} tries in #{elapsed_time} seconds and #{next_interval} seconds until the next try."
+          close_browser
+        end
+        Retriable.retriable on_retry: do_this_on_each_retry do
+          @success = true
+          browser_reader = Hercules::UptimeMonitor::BrowserReader.new(@monitor.browser)
+          start_browser(@monitor.url, browser_reader.browser_name, browser_reader.headless)
+          exists(@monitor.exists?)
+          close_browser
+          @success
+        end
       rescue Exception => e
         close_browser
         raise e
