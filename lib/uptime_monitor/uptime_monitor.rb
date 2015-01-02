@@ -22,10 +22,11 @@ module Ragios
       def test_command?
         do_this_on_each_retry = Proc.new do |exception, try, elapsed_time, next_interval|
           $stderr.puts '-' * 80
+          $stderr.puts "UptimeMonitor for #{@monitor.monitor}:"
           $stderr.puts "#{exception.class}: '#{exception.message}' - #{try} tries in #{elapsed_time} seconds and #{next_interval} seconds until the next try."
           $stderr.puts exception.backtrace.join("\n")
           $stderr.puts '-' * 80
-          close_browser
+          close_browser rescue nil
         end
         Retriable.retriable on_retry: do_this_on_each_retry do
           @success = true
@@ -36,7 +37,12 @@ module Ragios
           @success
         end
       rescue Exception => e
-        close_browser
+        $stderr.puts '-' * 80
+        $stderr.puts "UptimeMonitor for #{@monitor.monitor}:"
+        $stderr.puts "#{e.class}: #{e.message}"
+        $stderr.puts e.backtrace.join("\n")
+        $stderr.puts '-' * 80
+        close_browser rescue nil
         raise e
       end
 
