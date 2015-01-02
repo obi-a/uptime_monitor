@@ -7,9 +7,6 @@ module Ragios
 
       def initialize
         @test_result = ActiveSupport::OrderedHash.new
-        Retriable.configure do |c|
-          c.tries = 6
-        end
       end
 
       def init(monitor)
@@ -24,7 +21,10 @@ module Ragios
 
       def test_command?
         do_this_on_each_retry = Proc.new do |exception, try, elapsed_time, next_interval|
-          log "#{exception.class}: '#{exception.message}' - #{try} tries in #{elapsed_time} seconds and #{next_interval} seconds until the next try."
+          $stderr.puts '-' * 80
+          $stderr.puts "#{exception.class}: '#{exception.message}' - #{try} tries in #{elapsed_time} seconds and #{next_interval} seconds until the next try."
+          $stderr.puts exception.backtrace.join("\n")
+          $stderr.puts '-' * 80
           close_browser
         end
         Retriable.retriable on_retry: do_this_on_each_retry do
