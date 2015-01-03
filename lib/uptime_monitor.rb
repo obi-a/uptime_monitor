@@ -6,7 +6,7 @@ require 'active_support'
 require 'retriable'
 
 Retriable.configure do |c|
-  c.tries = 10
+  c.tries = 50
 end
 
 def require_all(path)
