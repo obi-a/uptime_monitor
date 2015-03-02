@@ -111,7 +111,9 @@ module Hercules
       end
     private
       def goto(url, browser_name)
-        @browser = Watir::Browser.new browser_name
+        client = Selenium::WebDriver::Remote::Http::Default.new
+        client.timeout = 180 # seconds – default is 60
+        @browser = Watir::Browser.new browser_name, http_client: client
         @browser.goto url
       end
       def start_headless
