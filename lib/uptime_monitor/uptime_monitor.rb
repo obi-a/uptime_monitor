@@ -20,32 +20,17 @@ module Ragios
       end
 
       def test_command?
-=begin
-        do_this_on_each_retry = Proc.new do |exception, try, elapsed_time, next_interval|
-          $stderr.puts '-' * 80
-          $stderr.puts "UptimeMonitor for #{@monitor.monitor}:"
-          $stderr.puts "#{exception.class}: '#{exception.message}' - #{try} tries in #{elapsed_time} seconds and #{next_interval} seconds until the next try."
-          $stderr.puts exception.backtrace.join("\n")
-          $stderr.puts '-' * 80
-          close_browser rescue nil
-        end
-        Retriable.retriable on_retry: do_this_on_each_retry do
-=end
-          @success = true
-          browser_reader = Hercules::UptimeMonitor::BrowserReader.new(@monitor.browser)
-          start_browser(@monitor.url, browser_reader.browser_name, browser_reader.headless)
-          exists(@monitor.exists?)
-          close_browser
-          @success
-        #end
+        @success = true
+        browser_reader = Hercules::UptimeMonitor::BrowserReader.new(@monitor.browser)
+        start_browser(@monitor.url, browser_reader.browser_name, browser_reader.headless)
+        exists(@monitor.exists?)
+        close_browser
+        @success
+      rescue Net::ReadTimeout => e
+        close_browser rescue nil
+        @test_result = {"Page Load Timeout" => "Page could not load after 2 minutes"}
+        return true
       rescue Exception => e
-=begin
-        $stderr.puts '-' * 80
-        $stderr.puts "UptimeMonitor for #{@monitor.monitor}:"
-        $stderr.puts "#{e.class}: #{e.message}"
-        $stderr.puts e.backtrace.join("\n")
-        $stderr.puts '-' * 80
-=end
         close_browser rescue nil
         raise e
       end

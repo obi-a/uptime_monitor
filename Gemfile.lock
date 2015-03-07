@@ -1,10 +1,4 @@
 GIT
-  remote: https://github.com/kamui/retriable.git
-  revision: 7d3e96ae0274fb04cbdfa5d2945f18ea6e2f2e5c
-  specs:
-    retriable (2.0.0.beta5)
-
-GIT
   remote: https://github.com/watir/watir-webdriver.git
   revision: 190a737975f17ed1c8e1207caca257a55198278a
   specs:
@@ -109,7 +103,6 @@ DEPENDENCIES
   jeweler (~> 1.8.7)
   pry
   rdoc (~> 3.12)
-  retriable!
   rspec
   watir-webdriver!
   watir-webdriver-performance (~> 0.2.4)

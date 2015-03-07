@@ -3,11 +3,6 @@ require 'watir-webdriver'
 require 'watir-webdriver-performance'
 require 'ostruct'
 require 'active_support'
-require 'retriable'
-
-Retriable.configure do |c|
-  c.tries = 50
-end
 
 def require_all(path)
   Dir.glob(File.dirname(__FILE__) + path + '/*.rb') do |file|

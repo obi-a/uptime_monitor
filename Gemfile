@@ -6,7 +6,6 @@ gem 'headless', "~> 1.0.2"
 gem 'watir-webdriver', git: 'https://github.com/watir/watir-webdriver.git'
 gem 'watir-webdriver-performance', "~> 0.2.4"
 gem 'activesupport', '~> 4.0'
-gem 'retriable', git: 'https://github.com/kamui/retriable.git'
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
