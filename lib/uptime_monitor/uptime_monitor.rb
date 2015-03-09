@@ -20,15 +20,17 @@ module Ragios
       end
 
       def test_command?
+        @result_set = []
         @success = true
         browser_reader = Hercules::UptimeMonitor::BrowserReader.new(@monitor.browser)
         start_browser(@monitor.url, browser_reader.browser_name, browser_reader.headless)
         exists(@monitor.exists?)
+        @test_result = {results: @result_set }
         close_browser
         @success
       rescue Net::ReadTimeout => e
         close_browser rescue nil
-        @test_result = {"Page Load Timeout" => "Page could not load after 2 minutes"}
+        @test_result = {results: ["Page Load Timeout", "Page could not load after 2 minutes"]}
         return true
       rescue Exception => e
         close_browser rescue nil
@@ -51,8 +53,8 @@ module Ragios
 
       def result!(page_element, state)
         @success = false if state == false
-        result = state ? {page_element => :exists_as_expected} : {page_element => :does_not_exist_as_expected}
-        @test_result.merge!(result)
+        result = state ? [page_element, "exists_as_expected"] : [page_element, "does_not_exist_as_expected"]
+        @result_set << result
       end
     end
   end
