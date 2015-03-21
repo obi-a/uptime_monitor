@@ -97,7 +97,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activesupport (~> 4.0)
+  activesupport
   bundler (~> 1.0)
   headless (~> 1.0.2)
   jeweler (~> 1.8.7)
