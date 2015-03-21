@@ -7,6 +7,8 @@ module Ragios
 
       def initialize
         @test_result = ActiveSupport::OrderedHash.new
+        @result_set = []
+        @test_result = {results: @result_set }
       end
 
       def init(monitor)
