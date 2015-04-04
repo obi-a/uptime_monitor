@@ -71,6 +71,6 @@ describe Ragios::Plugin::UptimeMonitor do
               }
     @uptime_monitor.init(monitor)
     @uptime_monitor.test_command?.should == false
-    @uptime_monitor.test_result.should == {:results => [[page_element, "does_not_exist_as_expected"]]}
+    @uptime_monitor.test_result.should  include(:results => [[page_element, "does_not_exist_as_expected"]])
   end
 end

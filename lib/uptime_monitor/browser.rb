@@ -110,7 +110,12 @@ module Hercules
         false
       end
       def capture_screenshot
-       @browser.screenshot.save "screenshot.png"
+        filename = "screenshot#{Time.now.to_i}.png"
+        @browser.screenshot.save(filename)
+        file = File.open(filename)
+        uploader = Hercules::ScreenShotUploader.new
+        uploader.store!(file)
+        uploader.url
       end
     private
       def goto(url, browser_name)
