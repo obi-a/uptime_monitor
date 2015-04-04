@@ -24,6 +24,7 @@ module Ragios
       def test_command?
         @result_set = []
         @success = true
+        @has_screenshot = false
         browser_reader = Hercules::UptimeMonitor::BrowserReader.new(@monitor.browser)
         start_browser(@monitor.url, browser_reader.browser_name, browser_reader.headless)
         exists(@monitor.exists?)
@@ -49,7 +50,12 @@ module Ragios
 
       def exists(page_elements)
         page_elements.each do |page_element|
-          @browser.exists?(page_element) ? result!(page_element, true) : result!(page_element, false)
+          if @browser.exists?(page_element) 
+            result!(page_element, true) 
+          else 
+            take_screenshot
+            result!(page_element, false)
+          end
         end
       end
 
@@ -58,6 +64,13 @@ module Ragios
         result = state ? [page_element, "exists_as_expected"] : [page_element, "does_not_exist_as_expected"]
         @result_set << result
       end
+
+      def take_screenshot
+        if not(@has_screenshot) 
+          @browser.capture_screenshot 
+          @has_screenshot = true
+        end
+      end   
     end
   end
 end

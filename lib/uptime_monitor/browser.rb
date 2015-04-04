@@ -109,6 +109,9 @@ module Hercules
       rescue Watir::Wait::TimeoutError
         false
       end
+      def capture_screenshot
+       @browser.screenshot.save "screenshot.png"
+      end
     private
       def goto(url, browser_name)
         client = Selenium::WebDriver::Remote::Http::Default.new
