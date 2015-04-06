@@ -17,4 +17,6 @@ CarrierWave.configure do |config|
   config.s3_secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
   config.s3_bucket = ENV['RAGIOS_HERCULES_S3_DIR']
 end
+
+CarrierWave.clean_cached_files!
 require_all '/uptime_monitor'
