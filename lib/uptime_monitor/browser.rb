@@ -113,7 +113,7 @@ module Hercules
         filename = "screenshot#{Time.now.to_i}.png"
         @browser.screenshot.save(filename)
         file = File.open(filename)
-        uploader = Hercules::ScreenShotUploader.new
+        uploader = Hercules::UptimeMonitor::ScreenShotUploader.new
         uploader.store!(file)
         uploader.url
       end
