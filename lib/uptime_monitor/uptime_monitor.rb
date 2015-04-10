@@ -8,7 +8,7 @@ module Ragios
       def initialize
         @test_result = ActiveSupport::OrderedHash.new
         @result_set = []
-        @test_result = {results: @result_set }
+        @test_result = {results: @result_set}
       end
 
       def init(monitor)
@@ -67,7 +67,7 @@ module Ragios
       end
 
       def take_screenshot
-        if not(@has_screenshot) 
+        if RAGIOS_HERCULES_ENABLE_SCREENSHOTS && not(@has_screenshot) 
           @screenshot_url = @browser.capture_screenshot 
           @has_screenshot = true
         end
