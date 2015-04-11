@@ -384,14 +384,12 @@ Sometimes it's useful to run validations outside Ragios to verify that the valid
 ```ruby
 require 'uptime_monitor'
 
+page_element1 = [:title]
+page_element2 = [:div]
 monitor = {
-  monitor: "About Us page",
-  url: "https://www.southmunn.com/aboutus",
-  browser: ["firefox", headless: false],
-  exists?: [
-              [{div: {class: "box_content"}}, [includes_text: "SouthMunn is a Website Uptime Monitoring SASS created and maintained by"]],
-              [img: {src: "https://fc03.deviantart.net/fs14/f/2007/047/f/2/Street_Addiction_by_gizmodus.jpg"}],
-           ],
+  url: "http://obi-akubue.org",
+  browser: ["firefox", headless: true],
+  exists?: [page_element1, page_element2]
 }
 
 u = Ragios::Plugin::UptimeMonitor.new
@@ -399,30 +397,35 @@ u.init(monitor)
 u.test_command?
 #=> true
 u.test_result
-#=> {[{:div=>{:class=>"box_content"}},
-#  [{:includes_text=>
-#     "SouthMunn is a Website Uptime Monitoring SASS created and maintained by"}]]=>
-#  :exists_as_expected,
-# [{:img=>
-#    {:src=>
-#      "https://fc03.deviantart.net/fs14/f/2007/047/f/2/Street_Addiction_by_gizmodus.jpg"}}]=>
-#  :exists_as_expected}
+#=> {
+#     :results =>
+#       [
+#         [[:title], "exists_as_expected"], 
+#         [[:div], "exists_as_expected"]
+#     ]
+# }
 
+#test result for a failed test during downtime
+page_element = [:title, [text: "dont_exist"]]
+monitor = {
+  url: "http://obi-akubue.org",
+  browser: ["firefox", headless: true],
+  exists?: [page_element]
+}
 
-#test result during downtime
+u.init(monitor)
 u.test_command?
 #=> false
 u.test_result
-#=> {[{:div=>{:class=>"box_content"}},
-#  [{:includes_text=>
-#     "SouthMunn is a Website Uptime Monitoring SASS created and maintained by"}]]=>
-#  :does_not_exist_as_expected,
-# [{:img=>
-#    {:src=>
-#      "https://fc03.deviantart.net/fs14/f/2007/047/f/2/Street_Addiction_by_gizmodus.jpg"}}]=>
-#  :does_not_exist_as_expected}
+#=> {
+#     :results=>
+#       [
+#          [[:title, [{:text=>"dont_exist"}]], "does_not_exist_as_expected"]
+#       ]
+# }
 ```
-In the above example the test_command?() method runs all validations and returns true when all validations passes, returns false when any of the validation fails. test_result is a hash that contains the result of the tests ran by test_command?().
+In the above example the test_command? method runs the validations and returns true when all validations passes, returns false when any of the validation fails. test_result is a hash that contains the result of the tests ran by test_command?.
+
 
 ####Testing individual validations
 It can be very useful to test validations individually before adding them to Ragios. This can be done by running plugin's browser object directly.
@@ -445,8 +448,67 @@ browser.close
 The above example creates a browser object and visits the url. The exists? method takes a single validation as arguement and performs the validation on the url, it returns true if the validation passes and returns false if the validation fails. In the first validation it checks if the title tag on the url includes the text 'ruby'.
 
 
+##Screenshots
+The uptime_monitor can be configured to take a screenshot of the webpage when a test fails. This screenshot is uploaded to Amazon s3 and its url is included in the test_result. So the website admin can see what the site looks like when transaction failed.
+
+This feature is disable by default, to enable it set following environment variable.
+```
+RAGIOS_HERCULES_ENABLE_SCREENSHOTS=true
+```
+Also set environment variables for the Amazon s3 account you want to use for storing the screenshots,
+```
+AWS_ACCESS_KEY_ID=xxxxxxx
+AWS_SECRET_ACCESS_KEY=xxxxxx
+RAGIOS_HERCULES_S3_DIR=xxxxxx
+```
+The above env vars are for the Amazon AWS access key, AWS secret key and s3 directory/bucket you want to use for storage. First create this s3 bucket manually.
+
+With the screenshots feature enabled, the results of a failed test will include a screenshot of the webpage when the test failed.
+See an example below:
+```ruby
+require 'uptime_monitor'
+
+page_element = [:title, [text: "dont_exist"]]
+monitor = {
+  url: "http://obi-akubue.org",
+  browser: ["firefox", headless: true],
+  exists?: [page_element]
+}
+
+u = Ragios::Plugin::UptimeMonitor.new
+u.init(monitor)
+u.test_command?
+#=>false
+u.test_result
+#=>  {
+#      :results=>
+#        [
+#          [[:title, [{:text=>"dont_exist"}]], "does_not_exist_as_expected"]
+#        ],
+#      :screenshot=>
+#        "http://screenshot-ragios.s3.amazonaws.com/uploads/screenshot1428783237.png"
+#    }
+```
+Notice that test result includes a url to the screenshot of the webpage when the test failed. This test result is also included in the notifications sent to site admin by by Ragios when a test fails. So this way the admin can see exactly what webpage looked like when the transaction failed.
+
+##Disable screenshots on individual monitors
+To disable screenshots on a particular monitor add the key/value pair ```disable_screenshots: true```
+example:
+```ruby
+page_element = [:title]
+monitor = {
+  url: "http://obi-akubue.org",
+  browser: ["firefox", headless: true],
+  exists?: [page_element],
+  disable_screenshots: true
+}
+
+ragios.create(monitor)
+```
+This will diable screenshots only for this monitor, no screenshots will be taken when its test fails.
+
 ##Specification:
-<pre lang="ruby">
+```ruby
 monitor = {
   monitor: "My Website",
   url: "http://mysite.com",
@@ -470,7 +532,7 @@ monitor = {
   browser: ["firefox", headless: true]
 }
 ragios.create(monitor)
-</pre>
+```
 
 
 ##License:
