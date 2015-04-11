@@ -30,7 +30,7 @@ module Ragios
         browser_reader = Hercules::UptimeMonitor::BrowserReader.new(@monitor.browser)
         start_browser(@monitor.url, browser_reader.browser_name, browser_reader.headless)
         exists(@monitor.exists?)
-        @test_result = {results: @result_set }
+        @test_result = {results: @result_set}
         @test_result[:screenshot] = @screenshot_url if @has_screenshot
         close_browser
         @success
@@ -69,7 +69,7 @@ module Ragios
       end
 
       def take_screenshot
-        if RAGIOS_HERCULES_ENABLE_SCREENSHOTS && not(@has_screenshot) 
+        if RAGIOS_HERCULES_ENABLE_SCREENSHOTS && not(@monitor.disable_screenshots) && not(@has_screenshot) 
           @screenshot_url = @browser.capture_screenshot 
           @has_screenshot = true
         end

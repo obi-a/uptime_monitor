@@ -87,4 +87,19 @@ describe Ragios::Plugin::UptimeMonitor do
     @uptime_monitor.success.should == false     
     @uptime_monitor.close_browser
   end
+  it "can disable screenshot capture when a test fails for individual monitors" do 
+    page_element = [:title, [text: "dont_exist"]]
+    monitor = {
+      url: "http://obi-akubue.org",
+      browser: ["firefox", headless: true],
+      exists?: [page_element],
+      disable_screenshots: true
+    }
+    @uptime_monitor.init(monitor)
+    @uptime_monitor.test_command?.should == false
+    @uptime_monitor.has_screenshot.should == false
+    @uptime_monitor.screenshot_url.should == nil
+    @uptime_monitor.success.should == false 
+    @uptime_monitor.close_browser
+  end
 end
