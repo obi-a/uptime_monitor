@@ -4,6 +4,8 @@ module Ragios
       attr_reader :monitor
       attr_reader :test_result
       attr_reader :success
+      attr_reader :screenshot_url
+      attr_reader :has_screenshot
 
       def initialize
         @test_result = ActiveSupport::OrderedHash.new
