@@ -402,8 +402,8 @@ u.test_result
 #       [
 #         [[:title], "exists_as_expected"], 
 #         [[:div], "exists_as_expected"]
-#     ]
-# }
+#       ]
+#   }
 
 #test result for a failed test during downtime
 page_element = [:title, [text: "dont_exist"]]
@@ -422,7 +422,7 @@ u.test_result
 #       [
 #          [[:title, [{:text=>"dont_exist"}]], "does_not_exist_as_expected"]
 #       ]
-# }
+#   }
 ```
 In the above example the test_command? method runs the validations and returns true when all validations passes, returns false when any of the validation fails. test_result is a hash that contains the result of the tests ran by test_command?.
 
