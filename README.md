@@ -17,6 +17,10 @@ Run bundle install from the ragios root directory
  ```
  bundle install
  ```
+In the Ragios root directory, in the file ```config.rb```, add to line 1
+```ruby 
+require 'uptime_monitor'
+```
 Restart ragios
 
 ##usage:
