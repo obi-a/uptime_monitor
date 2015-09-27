@@ -6,6 +6,8 @@ module Ragios
       attr_reader :success
       attr_reader :screenshot_url
       attr_reader :has_screenshot
+      attr_reader :browser_info
+      attr_reader :s_expr
 
       def initialize
         @test_result = ActiveSupport::OrderedHash.new
@@ -19,17 +21,19 @@ module Ragios
         raise(Hercules::UptimeMonitor::NoUrlProvided.new(error: message), message) if @monitor.url.nil?
         message = "A browser must be provided for uptime_monitor: #{@monitor.monitor}"
         raise(Hercules::UptimeMonitor::NoBrowserProvided.new(error: message), message) if @monitor.browser.nil?
+        @browser_info = Hercules::UptimeMonitor::BrowsersLangParser.new.parse(@monitor.browser)
         message = "A validation (exists?) must be provided for uptime_monitor: #{@monitor.monitor}"
         raise(Hercules::UptimeMonitor::NoValidationProvided.new(error: message), message) if @monitor.exists?.nil?
+        @s_expr = Hercules::UptimeMonitor::MaestroLangParser.new.parse(@monitor.exists?)
+        {ok: true}
       end
 
       def test_command?
         @result_set = []
         @success = true
         @has_screenshot = false
-        browser_reader = Hercules::UptimeMonitor::BrowserReader.new(@monitor.browser)
-        start_browser(@monitor.url, browser_reader.browser_name, browser_reader.headless)
-        exists(@monitor.exists?)
+        start_browser(@monitor.url, browser_info[:browser], !!browser_info[:headless] )
+        exists(@s_expr)
         @test_result = {results: @result_set}
         @test_result[:screenshot] = @screenshot_url if @has_screenshot
         close_browser
@@ -53,9 +57,9 @@ module Ragios
 
       def exists(page_elements)
         page_elements.each do |page_element|
-          if @browser.exists?(page_element) 
-            result!(page_element, true) 
-          else 
+          if @browser.exists?(page_element)
+            result!(page_element, true)
+          else
             take_screenshot
             result!(page_element, false)
           end
@@ -69,11 +73,11 @@ module Ragios
       end
 
       def take_screenshot
-        if RAGIOS_HERCULES_ENABLE_SCREENSHOTS && not(@monitor.disable_screenshots) && not(@has_screenshot) 
-          @screenshot_url = @browser.capture_screenshot 
+        if RAGIOS_HERCULES_ENABLE_SCREENSHOTS && not(@monitor.disable_screenshots) && not(@has_screenshot)
+          @screenshot_url = @browser.capture_screenshot
           @has_screenshot = true
         end
-      end   
+      end
     end
   end
 end
