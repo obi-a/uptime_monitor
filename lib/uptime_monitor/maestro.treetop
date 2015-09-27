@@ -1,0 +1,170 @@
+grammar Maestro
+
+  rule body
+    ( waiting  / validations_and_actions / element_validation / single_html_element / space)* {
+      def content
+        elements.map { |e| e.content }.compact
+      end
+    }
+  end
+
+  rule waiting
+    space? "wait_for" page_content  {
+      def content
+        [{:wait_until_exists? => [page_content.content] }]
+      end
+    }
+  end
+
+  rule page_content
+    space (validations_and_actions / element_validation /  html_element) space? {
+      def content
+        elements[1].content
+      end
+    }
+  end
+
+  rule validations_and_actions
+    (element_validation / html_element) check_func+ {
+      def content
+        container = [elements.first.content]
+        elements.last.elements.each do |e|
+          container << e.content
+        end
+        container
+      end
+    }
+  end
+
+  rule element_validation
+    html_element ".where" hash space? {
+      def content
+        {html_element.content => hash.content }
+      end
+    }
+  end
+
+  rule check_func
+    "." (reserved_with_string / click ) {
+      def content
+        elements[1].content
+      end
+    }
+  end
+
+  rule click
+    "click" {
+      def content
+        [:click]
+      end
+    }
+  end
+
+  rule reserved_with_string
+    reserved_functions string_params  {
+      def content
+        [{reserved_functions.content => string_params.content }]
+      end
+    }
+  end
+
+  rule reserved_functions
+    ("with_text" / "includes_text" / "set" / "select") {
+      def content
+        case text_value
+        when "with_text"
+          :text
+        when "includes_text"
+          :includes_text
+        when "set"
+          :set
+        when "select"
+          :select
+        end
+      end
+    }
+  end
+
+  rule string_params
+    '(' string ')' {
+      def content
+        string.content
+      end
+    }
+  end
+
+  rule hash
+    '(' hash_contents+ ')' {
+      def content
+        hash = {}
+        elements[1].elements.each do |e|
+          hash.merge!(e.content)
+        end
+        hash
+      end
+    }
+  end
+
+  rule hash_contents
+    key_value_pair space? ','? space? {
+      def content
+        key_value_pair.content
+      end
+    }
+  end
+
+  rule key_value_pair
+    space? identifier space? ":" space? string space? {
+      def content
+        {identifier.content => string.content }
+      end
+    }
+  end
+
+  rule single_html_element
+    word number {
+      def content
+        [text_value.to_sym]
+      end
+    }
+  end
+
+  rule html_element
+    word number {
+      def content
+        text_value.to_sym
+      end
+    }
+  end
+
+  rule identifier
+    word number {
+      def content
+        text_value.to_sym
+      end
+    }
+  end
+
+  rule string
+    '"' (!'"' . / '\"')* '"' {
+      def content
+        eval text_value
+      end
+    }
+  end
+
+  rule word
+    [A-Za-z_]+
+  end
+
+  rule number
+    ([0-9]+)?
+  end
+
+  rule space
+    [\s]+ {
+      def content
+      end
+    }
+  end
+end

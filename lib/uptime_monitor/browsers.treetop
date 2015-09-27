@@ -1,0 +1,36 @@
+grammar Browsers
+
+  rule body
+    space? browser_name space? headless? {
+      def content
+        hash = {}
+        hash[:browser] = browser_name.content
+        hash[:headless] = !elements.last.empty?
+        hash
+      end
+    }
+  end
+
+  rule headless
+    "headless" space? {
+      def content
+        true
+      end
+    }
+  end
+
+  rule browser_name
+    [\S]+ {
+      def content
+        text_value
+      end
+    }
+  end
+
+  rule space
+    [\s]+ {
+      def content
+      end
+    }
+  end
+end
