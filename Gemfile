@@ -9,6 +9,7 @@ gem 'activesupport'
 gem 'carrierwave', "0.4.10"
 gem 'aws'
 gem "aws-s3"
+gem "treetop"
 
 
 # Add dependencies to develop your gem here.
