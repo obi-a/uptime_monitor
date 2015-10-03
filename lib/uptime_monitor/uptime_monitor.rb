@@ -8,6 +8,7 @@ module Ragios
       attr_reader :has_screenshot
       attr_reader :browser_info
       attr_reader :s_expr
+      attr_reader :validations
 
       def initialize
         @test_result = ActiveSupport::OrderedHash.new
@@ -25,6 +26,7 @@ module Ragios
         message = "A validation (exists?) must be provided for uptime_monitor: #{@monitor.monitor}"
         raise(Hercules::UptimeMonitor::NoValidationProvided.new(error: message), message) if @monitor.exists?.nil?
         @s_expr = Hercules::UptimeMonitor::MaestroLangParser.new.parse(@monitor.exists?)
+        @validations = Hercules::UptimeMonitor::MaestroLangParser.new.parse(@monitor.exists?, description = true)
         {ok: true}
       end
 
@@ -56,19 +58,19 @@ module Ragios
       end
 
       def exists(page_elements)
-        page_elements.each do |page_element|
-          if @browser.exists?(page_element)
-            result!(page_element, true)
+        for i in 0..(page_elements.length - 1)
+          if @browser.exists?(page_elements[i])
+            result!(@validations[i], true)
           else
             take_screenshot
-            result!(page_element, false)
+            result!(@validations[i], false)
           end
         end
       end
 
-      def result!(page_element, state)
+      def result!(validation, state)
         @success = false if state == false
-        result = state ? [page_element, "exists_as_expected"] : [page_element, "does_not_exist_as_expected"]
+        result = state ? [validation, "exists_as_expected"] : [validation, "does_not_exist_as_expected"]
         @result_set << result
       end
 

@@ -5,6 +5,10 @@ grammar Maestro
       def content
         elements.map { |e| e.content }.compact
       end
+
+      def description
+        elements.map { |e| e.description }.compact
+      end
     }
   end
 
@@ -13,6 +17,9 @@ grammar Maestro
       def content
         [{:wait_until_exists? => [page_content.content] }]
       end
+      def description
+        "waited, #{page_content.description}"
+      end
     }
   end
 
@@ -20,6 +27,9 @@ grammar Maestro
     space (validations_and_actions / element_validation /  html_element) space? {
       def content
         elements[1].content
+      end
+      def description
+        elements[1].description
       end
     }
   end
@@ -33,6 +43,14 @@ grammar Maestro
         end
         container
       end
+
+      def description
+        string = elements.first.description
+        elements.last.elements.each do |e|
+          string << e.description
+        end
+        string
+      end
     }
   end
 
@@ -40,6 +58,9 @@ grammar Maestro
     html_element ".where" hash space? {
       def content
         {html_element.content => hash.content }
+      end
+      def description
+        "#{html_element.description}with #{hash.description}"
       end
     }
   end
@@ -49,6 +70,9 @@ grammar Maestro
       def content
         elements[1].content
       end
+      def description
+        elements[1].description
+      end
     }
   end
 
@@ -57,6 +81,9 @@ grammar Maestro
       def content
         [:click]
       end
+      def description
+        ""
+      end
     }
   end
 
@@ -64,6 +91,13 @@ grammar Maestro
     reserved_functions string_params  {
       def content
         [{reserved_functions.content => string_params.content }]
+      end
+      def description
+        if reserved_functions.description.include?("set") || reserved_functions.description.include?("select")
+          ""
+        else
+          "#{reserved_functions.description} #{string_params.description}"
+        end
       end
     }
   end
@@ -82,6 +116,18 @@ grammar Maestro
           :select
         end
       end
+      def description
+        case text_value
+        when "with_text"
+          "with text"
+        when "includes_text"
+          "includes text"
+        when "set"
+          "set to"
+        when "select"
+          "select"
+        end
+      end
     }
   end
 
@@ -89,6 +135,9 @@ grammar Maestro
     '(' string ')' {
       def content
         string.content
+      end
+      def description
+        string.description
       end
     }
   end
@@ -102,6 +151,16 @@ grammar Maestro
         end
         hash
       end
+      def description
+        string = ""
+        count = 0
+        elements[1].elements.each do |e|
+          string << ", " if count > 0
+          string << e.description
+          count += 1
+        end
+        string
+      end
     }
   end
 
@@ -109,6 +168,9 @@ grammar Maestro
     key_value_pair space? ','? space? {
       def content
         key_value_pair.content
+      end
+      def description
+        key_value_pair.description
       end
     }
   end
@@ -118,6 +180,9 @@ grammar Maestro
       def content
         {identifier.content => string.content }
       end
+      def description
+        "#{identifier.description} equals to #{string.description}"
+      end
     }
   end
 
@@ -125,6 +190,9 @@ grammar Maestro
     word number {
       def content
         [text_value.to_sym]
+      end
+      def description
+        "#{text_value}"
       end
     }
   end
@@ -134,6 +202,9 @@ grammar Maestro
       def content
         text_value.to_sym
       end
+      def description
+        "#{text_value} "
+      end
     }
   end
 
@@ -142,6 +213,9 @@ grammar Maestro
       def content
         text_value.to_sym
       end
+      def description
+        text_value
+      end
     }
   end
 
@@ -149,6 +223,9 @@ grammar Maestro
     '"' (!'"' . / '\"')* '"' {
       def content
         eval text_value
+      end
+      def description
+        text_value
       end
     }
   end
@@ -164,6 +241,9 @@ grammar Maestro
   rule space
     [\s]+ {
       def content
+      end
+
+      def description
       end
     }
   end

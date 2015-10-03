@@ -3,7 +3,7 @@ require 'treetop'
 module Hercules
   module UptimeMonitor
     class Parser
-      def self.parse(data, parser)
+      def self.parse(data, parser, description = false)
         if data.respond_to? :read
           data = data.read
         end
@@ -11,7 +11,7 @@ module Hercules
         ast = parser.parse data
 
         if ast
-          return ast.content
+          return (description ? ast.description : ast.content)
         else
           parser.failure_reason =~ /^(Expected .+) after/m
           message =
@@ -27,8 +27,8 @@ module Hercules
     class MaestroLangParser
       Treetop.load(File.expand_path(File.join(File.dirname(__FILE__), 'maestro')))
       @@maestro_parser = MaestroParser.new
-      def parse(data)
-        Hercules::UptimeMonitor::Parser.parse(data, @@maestro_parser)
+      def parse(data, description = false)
+        Hercules::UptimeMonitor::Parser.parse(data, @@maestro_parser, description)
       end
     end
 
