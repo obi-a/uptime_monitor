@@ -15,7 +15,7 @@ grammar Maestro
   rule waiting
     space? "wait_for" page_content  {
       def content
-        [{:wait_until_exists? => [page_content.content] }]
+        [{:wait_until_exists? => page_content.content }]
       end
       def description
         "waited, #{page_content.description}"
@@ -37,7 +37,8 @@ grammar Maestro
   rule validations_and_actions
     (element_validation / html_element) check_func+ {
       def content
-        container = [elements.first.content]
+        this_content = elements.first.content
+        container = [(this_content.is_a?(Array) ? this_content.first  : this_content )]
         elements.last.elements.each do |e|
           container << e.content
         end
@@ -47,7 +48,9 @@ grammar Maestro
       def description
         string = elements.first.description
         elements.last.elements.each do |e|
-          string << e.description
+          element_description = e.description
+          string << ", " if element_description.include?("with text") || element_description.include?("includes text")
+          string << element_description
         end
         string
       end
@@ -55,12 +58,12 @@ grammar Maestro
   end
 
   rule element_validation
-    html_element ".where" hash space? {
+    html_element ".where" space? hash space? {
       def content
-        {html_element.content => hash.content }
+        [{html_element.content => hash.content }]
       end
       def description
-        "#{html_element.description}with #{hash.description}"
+        "#{html_element.description}, with #{hash.description}"
       end
     }
   end
@@ -132,7 +135,7 @@ grammar Maestro
   end
 
   rule string_params
-    '(' string ')' {
+    space? '(' space? string space? ')' {
       def content
         string.content
       end
@@ -203,7 +206,7 @@ grammar Maestro
         text_value.to_sym
       end
       def description
-        "#{text_value} "
+        "#{text_value}"
       end
     }
   end
