@@ -14,15 +14,14 @@ module Hercules
           return (description ? ast.description : ast.content)
         else
           parser.failure_reason =~ /^(Expected .+) after/m
-          raise(Hercules::UptimeMonitor::SyntaxError.new(error: "syntax error"), "syntax error") if $1.nil?
+          raise(Hercules::UptimeMonitor::ParserSyntaxError.new(error: "syntax error"), "syntax error") if $1.blank?
           message =
           "#{$1.gsub("\n", '$NEWLINE')}:" << "\n" <<
           data.lines.to_a[parser.failure_line - 1] << "\n" <<
           "#{'~' * (parser.failure_column - 1)}^"
-          raise(Hercules::UptimeMonitor::SyntaxError.new(error: message), message)
+          raise(Hercules::UptimeMonitor::ParserSyntaxError.new(error: message), message)
         end
       end
-
     end
 
     class MaestroLangParser
@@ -41,6 +40,6 @@ module Hercules
       end
     end
 
-    class SyntaxError < StandardError; end
+    class ParserSyntaxError < StandardError; end
   end
 end

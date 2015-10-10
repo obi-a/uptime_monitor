@@ -21,8 +21,8 @@ describe Hercules::UptimeMonitor::MaestroLangParser do
     @parser.parse(validations, description = true).should == ["h1", "div", "anything"]
   end
   it "raises exceptions for incorrect html element format" do
-    expect{ @parser.parse("1hi") }.to raise_error(Hercules::UptimeMonitor::SyntaxError)
-    expect{ @parser.parse(" 1hi ") }.to raise_error(Hercules::UptimeMonitor::SyntaxError)
+    expect{ @parser.parse("1hi") }.to raise_error(Hercules::UptimeMonitor::ParserSyntaxError)
+    expect{ @parser.parse(" 1hi ") }.to raise_error(Hercules::UptimeMonitor::ParserSyntaxError)
   end
   it "returns the correct s expression for element validation" do
     validations = <<-eos
@@ -141,12 +141,12 @@ describe Hercules::UptimeMonitor::MaestroLangParser do
     ]
   end
   it "detects syntax errors" do
-    expect{ @parser.parse(".anything") }.to raise_error(Hercules::UptimeMonitor::SyntaxError)
-    expect { @parser.parse("h1.where") }.to raise_error(Hercules::UptimeMonitor::SyntaxError)
-    expect { @parser.parse("anything.anything") }.to raise_error(Hercules::UptimeMonitor::SyntaxError)
-    expect { @parser.parse("div.where(\"test\" => \"test\")") }.to raise_error(Hercules::UptimeMonitor::SyntaxError)
-    expect { @parser.parse("div.where(:test => \"test\")") }.to raise_error(Hercules::UptimeMonitor::SyntaxError)
-    expect { @parser.parse("title.with_text(Welcome to my site\")")  }.to raise_error(Hercules::UptimeMonitor::SyntaxError)
+    expect{ @parser.parse(".anything") }.to raise_error(Hercules::UptimeMonitor::ParserSyntaxError)
+    expect { @parser.parse("h1.where") }.to raise_error(Hercules::UptimeMonitor::ParserSyntaxError)
+    expect { @parser.parse("anything.anything") }.to raise_error(Hercules::UptimeMonitor::ParserSyntaxError)
+    expect { @parser.parse("div.where(\"test\" => \"test\")") }.to raise_error(Hercules::UptimeMonitor::ParserSyntaxError)
+    expect { @parser.parse("div.where(:test => \"test\")") }.to raise_error(Hercules::UptimeMonitor::ParserSyntaxError)
+    expect { @parser.parse("title.with_text(Welcome to my site\")") }.to raise_error(Hercules::UptimeMonitor::ParserSyntaxError)
   end
 end
 
