@@ -389,12 +389,10 @@ Sometimes it's useful to run validations outside Ragios to verify that the valid
 ```ruby
 require 'uptime_monitor'
 
-page_element1 = [:title]
-page_element2 = [:div]
 monitor = {
   url: "http://obi-akubue.org",
-  browser: ["firefox", headless: true],
-  exists?: [page_element1, page_element2]
+  browser: "firefox headless",
+  exists?: "title div"
 }
 
 u = Ragios::Plugin::UptimeMonitor.new
@@ -405,17 +403,16 @@ u.test_result
 #=> {
 #     :results =>
 #       [
-#         [[:title], "exists_as_expected"],
-#         [[:div], "exists_as_expected"]
+#         ["title", "exists_as_expected"],
+#         ["div", "exists_as_expected"]
 #       ]
 #   }
 
 #test result for a failed test during downtime
-page_element = [:title, [text: "dont_exist"]]
 monitor = {
   url: "http://obi-akubue.org",
-  browser: ["firefox", headless: true],
-  exists?: [page_element]
+  browser: "firefox headless",
+  exists?: 'title.with_text("something")'
 }
 
 u.init(monitor)
@@ -423,13 +420,13 @@ u.test_command?
 #=> false
 u.test_result
 #=> {
-#     :results=>
+#     :results =>
 #       [
-#          [[:title, [{:text=>"dont_exist"}]], "does_not_exist_as_expected"]
+#         ["title, with text \"something\"", "does_not_exist_as_expected"]
 #       ]
 #   }
 ```
-In the above example the test_command? method runs the validations and returns true when all validations passes, returns false when any of the validation fails. test_result is a hash that contains the result of the tests ran by test_command?.
+In the above example the *test_command?* method runs the validations and returns true when all validations passes, returns false when any of the validation fails. *test_result* is a hash that contains the result of the tests ran by *test_command?*.
 
 
 ####Testing individual validations
