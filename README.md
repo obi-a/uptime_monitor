@@ -430,24 +430,28 @@ In the above example the *test_command?* method runs the validations and returns
 
 
 ####Testing individual validations
-It can be very useful to test validations individually before adding them to Ragios. This can be done by running plugin's browser object directly.
+It can be very useful to test validations/actions individually before adding them to Ragios. This can be done by running plugin's browser directly.
 ```ruby
 require 'uptime_monitor'
 
 url= "http://obi-akubue.org"
 headless = false
 browser_name = "firefox"
-browser = Hercules::UptimeMonitor::Browser.new(url, browser_name, headless)
+browser = Hercules::Maestro::Browser.new(url, browser_name, headless)
 
-browser.exists? [:title, [includes_text: "ruby"]]
+browser.exists? 'title.includes_text("ruby")'
 
-browser.exists? [{h2:{class: "pagetitle"}}]
+browser.exists? 'text_field.where(id: "s").set("ruby")'
 
-browser.exists? [{checkbox:{name: "checkbox"}}, [:click]]
+browser.exists? 'checkbox.where(name: "checkbox").click'
 
 browser.close
 ```
-The above example creates a browser object and visits the url. The exists? method takes a single validation as arguement and performs the validation on the url, it returns true if the validation passes and returns false if the validation fails. In the first validation it checks if the title tag on the url includes the text 'ruby'.
+The above example will launch firebox and open the provided url. The exists?() method takes a single validation/action as parameter and performs the validation on the current page, it returns true if the validation passes and returns false if the validation fails. In the first validation
+```
+browser.exists? 'title.includes_text("ruby")'
+```
+it checks if the title tag on the current webpage includes the text 'ruby'.
 
 
 ##Screenshots
@@ -470,11 +474,10 @@ See an example below:
 ```ruby
 require 'uptime_monitor'
 
-page_element = [:title, [text: "dont_exist"]]
 monitor = {
   url: "http://obi-akubue.org",
-  browser: ["firefox", headless: true],
-  exists?: [page_element]
+  browser: "firefox headless",
+  exists?: 'title.with_text("dont_exist")'
 }
 
 u = Ragios::Plugin::UptimeMonitor.new
@@ -485,57 +488,28 @@ u.test_result
 #=>  {
 #      :results=>
 #        [
-#          [[:title, [{:text=>"dont_exist"}]], "does_not_exist_as_expected"]
+#          ["title, with text \"dont_exist\"", "does_not_exist_as_expected"]
 #        ],
 #      :screenshot=>
 #        "http://screenshot-ragios.s3.amazonaws.com/uploads/screenshot1428783237.png"
 #    }
 ```
-Notice that test result includes a url to the screenshot of the webpage when the test failed. This test result is also included in the notifications sent to site admin by by Ragios when a test fails. So this way the admin can see exactly what webpage looked like when the transaction failed.
+Notice that *test_result* includes a url to the screenshot  of the webpage when the test failed. This test result is also included in the notifications sent to site admin by Ragios when a test fails. So this way the admin can see exactly what webpage looked like when the transaction failed.
 
 ##Disable screenshots on individual monitors
 To disable screenshots on a particular monitor add the key/value pair ```disable_screenshots: true```
 example:
 ```ruby
-page_element = [:title]
 monitor = {
   url: "http://obi-akubue.org",
-  browser: ["firefox", headless: true],
-  exists?: [page_element],
+  browser: "firefox headless",
+  exists?: "title",
   disable_screenshots: true
 }
 
 ragios.create(monitor)
 ```
 This will diable screenshots only for this monitor, no screenshots will be taken when its test fails.
-
-##Specification:
-```ruby
-monitor = {
-  monitor: "My Website",
-  url: "http://mysite.com",
-  every: "5m",
-  contact: "admin@obiora.com",
-  via: "mail_notifier",
-  plugin: "uptime_monitor",
-  exists?: [
-              [:title, [text: "Welcome to my site"]],
-              [{div: {id:"test", class: "test-section"}}, [text: "this is a test"]],
-              [a: {href: "/aboutus" }],
-              [:h1],
-              [:h2,[text: "Login"]],
-              [form: {action: "/signup", method: "get"}],
-              [{element: {css: "#submit-button"}}, [:click]],
-              [{text_field: {id: "username"}}, [set: "admin"]],
-              [{text_field: {id: "password"}}, [set: "pass"]],
-              [link: {text: "Contact Us"}],
-              [wait_until_exists?: [div: {id:"open-section"}]]
-           ],
-  browser: ["firefox", headless: true]
-}
-ragios.create(monitor)
-```
-
 
 ##License:
 MIT License.
