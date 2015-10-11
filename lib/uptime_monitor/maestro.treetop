@@ -184,7 +184,7 @@ grammar Maestro
         {identifier.content => string.content }
       end
       def description
-        "#{identifier.description} equals to #{string.description}"
+        "#{identifier.description}=#{string.description}"
       end
     }
   end

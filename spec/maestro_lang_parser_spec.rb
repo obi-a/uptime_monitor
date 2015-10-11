@@ -46,10 +46,10 @@ describe Hercules::UptimeMonitor::MaestroLangParser do
       text_field.where(id:"search")
     eos
     @parser.parse(validations, description = true).should == [
-      'div, with class equals to "box_content"',
-      'div, with id equals to "test", class equals to "test-section"',
-      'link, with href equals to "https://www.southmunn.com/aboutus"',
-      'text_field, with id equals to "search"'
+      'div, with class="box_content"',
+      'div, with id="test", class="test-section"',
+      'link, with href="https://www.southmunn.com/aboutus"',
+      'text_field, with id="search"'
     ]
   end
   it "returns the correct s expression for text validations" do
@@ -76,7 +76,7 @@ describe Hercules::UptimeMonitor::MaestroLangParser do
     @parser.parse(validations, description = true).should == [
       'title, with text "Welcome to my site"',
       'title, includes text "Welcome"',
-      'div, with class equals to "box_content", includes text "SouthMunn is a Website"',
+      'div, with class="box_content", includes text "SouthMunn is a Website"',
       'title, includes text "ruby", includes text "Search Results"'
     ]
   end
@@ -105,10 +105,10 @@ describe Hercules::UptimeMonitor::MaestroLangParser do
       button.click
     eos
     @parser.parse(validations, description = true).should == [
-      'text_area, with name equals to "longtext"',
-      'select_list, with name equals to "mydropdown"',
-      'radio, with name equals to "group1", value equals to "Milk"',
-      'button, with value equals to "Add to Cart"',
+      'text_area, with name="longtext"',
+      'select_list, with name="mydropdown"',
+      'radio, with name="group1", value="Milk"',
+      'button, with value="Add to Cart"',
       'button'
     ]
   end
@@ -136,8 +136,8 @@ describe Hercules::UptimeMonitor::MaestroLangParser do
     @parser.parse(validations, description = true).should == [
       'waited, title, with text "Obi Akubue"',
       'waited, title, includes text "ruby", includes text "Search Results"',
-      'waited, text_field, with id equals to "s"',
-      'waited, div, with class equals to "box_content"'
+      'waited, text_field, with id="s"',
+      'waited, div, with class="box_content"'
     ]
   end
   it "detects syntax errors" do
