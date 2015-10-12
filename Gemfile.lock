@@ -122,6 +122,3 @@ DEPENDENCIES
   treetop
   watir-webdriver!
   watir-webdriver-performance (~> 0.2.4)
-
-BUNDLED WITH
-   1.10.1
