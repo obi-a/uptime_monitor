@@ -6,6 +6,8 @@ uptime_monitor (Hercules)
 Uptime_monitor is a [ragios](https://github.com/obi-a/ragios) plugin that uses a real web browser to perform transactions on a website to ensure that features of the site are still working correctly. It can check elements of a webpage to ensure they still exist and it can also perform transactions like a website login to ensure that the process still works correctly.
 
 ##Requirements
+Ruby: At least Ruby 2.2.1 or higher is recommended
+
 [Ragios](https://github.com/obi-a/ragios)
 
 ##Installation:
