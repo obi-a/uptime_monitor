@@ -40,7 +40,11 @@ monitor = {
 }
 ragios.create(monitor)
 ```
-The above example will create a ragios monitor that will, every 5 minutes, use firefox to visit the website url http://obi-akubue.org, and verify that the home page title tag matches the text "Obi Akubue". The validations performed as defined in the exists? key/value pair. When the title tag doesn't match the text, a failure notification will be sent out to the provided contact "admin@obiora.com".
+The above example will create a ragios monitor that will, every 5 minutes, use firefox to visit the website url http://obi-akubue.org, and verify that the home page title tag matches the text "Obi Akubue". The validations performed are defined in the exists? key/value pair, in this statement. 
+```ruby
+exists?: 'title.with_text("Obi Akubue")'
+```
+When the title tag on the web page doesn't match the text "Obi Akubue", a failure notification will be sent out to the provided contact "admin@obiora.com".
 
 ###Using the plugin
 To use the uptime monitor plugin add the key/value pair to the monitor
