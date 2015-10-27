@@ -25,7 +25,10 @@ require 'uptime_monitor'
 ```
 Restart ragios
 
-##usage:
+##Run in a Docker Container
+(Optional) A docker container is available with the uptime_monitor plugin and all its dependencies already setup and configured. You can run it out of the box with minimal effort in this docker container. See details here: [Using Maestro](https://github.com/obi-a/maestro).
+
+##Usage:
 A quick example, to monitor the title tag of a web page to ensure that it hasn't changed. Using [Ragios ruby client](http://www.whisperservers.com/ragios/ragios-saint-ruby/using-ragios)
 ````ruby
 monitor = {
@@ -40,7 +43,7 @@ monitor = {
 }
 ragios.create(monitor)
 ```
-The above example will create a ragios monitor that will, every 5 minutes, use firefox to visit the website url http://obi-akubue.org, and verify that the home page title tag matches the text "Obi Akubue". The validations performed are defined in the exists? key/value pair, in this statement. 
+The above example will create a ragios monitor that will, every 5 minutes, use firefox to visit the website url http://obi-akubue.org, and verify that the home page title tag matches the text "Obi Akubue". The validations performed are defined in the exists? key/value pair, in this statement.
 ```ruby
 exists?: 'title.with_text("Obi Akubue")'
 ```
