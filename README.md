@@ -38,7 +38,7 @@ monitor = {
   contact: "admin@obiora.com",
   via: "gmail_notifier",
   plugin: "uptime_monitor",
-  exists?: 'title.with_text("Obi Akubue")'
+  exists?: 'title.with_text("Obi Akubue")',
   browser: "firefox"
 }
 ragios.create(monitor)
