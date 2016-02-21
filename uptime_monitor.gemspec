@@ -62,7 +62,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<rspec>, [">= 0"])
       s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0"])
-      s.add_development_dependency(%q<jeweler>, ["~> 1.8.7"])
+      s.add_development_dependency(%q<jeweler>, ["~> 2.0.1"])
       s.add_development_dependency(%q<pry>, [">= 0"])
     else
       s.add_dependency(%q<headless>, ["~> 1.0.2"])
@@ -76,7 +76,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rspec>, [">= 0"])
       s.add_dependency(%q<rdoc>, ["~> 3.12"])
       s.add_dependency(%q<bundler>, ["~> 1.0"])
-      s.add_dependency(%q<jeweler>, ["~> 1.8.7"])
+      s.add_dependency(%q<jeweler>, ["~> 2.0.1"])
       s.add_dependency(%q<pry>, [">= 0"])
     end
   else
@@ -91,7 +91,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rspec>, [">= 0"])
     s.add_dependency(%q<rdoc>, ["~> 3.12"])
     s.add_dependency(%q<bundler>, ["~> 1.0"])
-    s.add_dependency(%q<jeweler>, ["~> 1.8.7"])
+    s.add_dependency(%q<jeweler>, ["~> 2.0.1"])
     s.add_dependency(%q<pry>, [">= 0"])
   end
 end
