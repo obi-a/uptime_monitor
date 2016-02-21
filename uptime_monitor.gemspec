@@ -44,7 +44,7 @@ Gem::Specification.new do |s|
   ]
   s.homepage = "http://github.com/obi-a/uptime_monitor"
   s.licenses = ["MIT"]
-  s.rubygems_version = "2.5.1"
+  s.rubygems_version = "2.4.8"
   s.summary = "Real browser website uptime monitoring plugin for Ragios"
 
   if s.respond_to? :specification_version then
