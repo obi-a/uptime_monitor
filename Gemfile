@@ -6,8 +6,6 @@ gem 'headless', "~> 1.0.2"
 gem 'watir-webdriver', git: 'https://github.com/watir/watir-webdriver.git'
 gem 'watir-webdriver-performance', "~> 0.2.4"
 gem 'activesupport'
-gem 'carrierwave', "0.4.10"
-gem 'aws'
 gem "aws-s3"
 gem "treetop"
 

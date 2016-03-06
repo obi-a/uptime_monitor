@@ -114,8 +114,7 @@ module Hercules
         @browser.screenshot.save(filename)
         file = File.open(filename)
         uploader = Hercules::UptimeMonitor::ScreenShotUploader.new
-        uploader.store!(file)
-        uploader.url
+        uploader.store(file)
       end
     private
       def goto(url, browser_name)

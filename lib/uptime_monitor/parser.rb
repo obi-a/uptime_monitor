@@ -14,7 +14,7 @@ module Hercules
           return (description ? ast.description : ast.content)
         else
           parser.failure_reason =~ /^(Expected .+) after/m
-          raise(Hercules::UptimeMonitor::ParserSyntaxError.new(error: "syntax error"), "syntax error") if $1.blank?
+          raise(Hercules::UptimeMonitor::ParserSyntaxError.new(error: "syntax error"), "syntax error") if ($1.nil? || $1.blank?)
           message =
           "#{$1.gsub("\n", '$NEWLINE')}:" << "\n" <<
           data.lines.to_a[parser.failure_line - 1] << "\n" <<
