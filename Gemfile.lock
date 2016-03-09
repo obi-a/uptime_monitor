@@ -8,12 +8,6 @@ GIT
 GEM
   remote: http://rubygems.org/
   specs:
-    activesupport (4.2.5.1)
-      i18n (~> 0.7)
-      json (~> 1.7, >= 1.7.7)
-      minitest (~> 5.1)
-      thread_safe (~> 0.3, >= 0.3.4)
-      tzinfo (~> 1.1)
     addressable (2.4.0)
     aws-s3 (0.6.3)
       builder
@@ -40,7 +34,6 @@ GEM
     hashie (3.4.3)
     headless (1.0.2)
     highline (1.7.8)
-    i18n (0.7.0)
     jeweler (2.0.1)
       builder
       bundler (>= 1.0)
@@ -57,7 +50,6 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2015.1120)
     mini_portile2 (2.0.0)
-    minitest (5.8.4)
     multi_json (1.11.2)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
@@ -101,8 +93,6 @@ GEM
     thread_safe (0.3.5)
     treetop (1.6.4)
       polyglot (~> 0.3)
-    tzinfo (1.2.2)
-      thread_safe (~> 0.1)
     watir-webdriver-performance (0.2.4)
       watir-webdriver
     websocket (1.2.2)
@@ -112,7 +102,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activesupport
   aws-s3
   bundler (~> 1.0)
   headless (~> 1.0.2)

@@ -2,7 +2,6 @@ require 'headless'
 require 'watir-webdriver'
 require 'watir-webdriver-performance'
 require 'ostruct'
-require 'active_support'
 require 'aws/s3'
 
 def require_all(path)
