@@ -11,7 +11,6 @@ module Ragios
       attr_reader :validations
 
       def initialize
-        @test_result = ActiveSupport::OrderedHash.new
         @result_set = []
         @test_result = {results: @result_set}
       end
