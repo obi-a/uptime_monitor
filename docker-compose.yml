@@ -1,0 +1,40 @@
+version: '3'
+services:
+  firefox:
+    image: selenium/node-firefox:3.8.1-erbium
+    volumes:
+      - /dev/shm:/dev/shm
+    depends_on:
+      - hub
+    environment:
+      HUB_HOST: hub
+
+  chrome:
+    image: selenium/node-chrome:3.8.1-erbium
+    volumes:
+      - /dev/shm:/dev/shm
+    depends_on:
+      - hub
+    environment:
+      HUB_HOST: hub
+
+  hub:
+    image: selenium/hub:3.8.1-erbium
+    ports:
+      - "4444:4444"
+
+  uptime_monitor:
+    build: .
+    volumes:
+      - .:/usr/src/uptime_monitor
+    links:
+      - hub:hub
+    environment:
+      AWS_ACCESS_KEY_ID:
+      AWS_SECRET_ACCESS_KEY:
+      RAGIOS_HERCULES_S3_DIR:
+      RAGIOS_HERCULES_ENABLE_SCREENSHOTS:
+    entrypoint: bundle exec rake repl
+
+
+

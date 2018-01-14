@@ -3,14 +3,16 @@ uptime_monitor (Hercules)
 [![Build Status](https://travis-ci.org/obi-a/uptime_monitor.png?branch=master)](https://travis-ci.org/obi-a/uptime_monitor)
 [![Gem Version](https://badge.fury.io/rb/uptime_monitor.svg)](http://badge.fury.io/rb/uptime_monitor)
 
+Status: currently updating the gem.
+
 Uptime_monitor is a [ragios](https://github.com/obi-a/ragios) plugin that uses a real web browser to perform transactions on a website to ensure that features of the site are still working correctly. It can check elements of a webpage to ensure they still exist and it can also perform transactions like a website login to ensure that the process still works correctly.
 
-##Requirements
+## Requirements
 Ruby: At least Ruby 2.3.0 or higher is recommended
 
 [Ragios](https://github.com/obi-a/ragios)
 
-##Installation:
+## Installation:
  Add the uptime_monitor gem to your ragios Gemfile
  ```ruby
  gem "uptime_monitor"
@@ -25,12 +27,12 @@ require 'uptime_monitor'
 ```
 Restart ragios
 
-##Run in a Docker Container
+## Run in a Docker Container
 (Optional) A docker container is available with the uptime_monitor plugin and all its dependencies already setup and configured. You can run it out of the box with minimal effort in this docker container. See details here: [Using Maestro](https://github.com/obi-a/maestro).
 
-##Usage:
+## Usage:
 A quick example, to monitor the title tag of a web page to ensure that it hasn't changed. Using [Ragios ruby client](http://www.whisperservers.com/ragios/ragios-saint-ruby/using-ragios)
-````ruby
+```ruby
 monitor = {
   monitor: "My Blog title tag",
   url: "http://obi-akubue.org",
@@ -49,13 +51,13 @@ exists?: 'title.with_text("Obi Akubue")'
 ```
 When the title tag on the web page doesn't match the text "Obi Akubue", a failure notification will be sent out to the provided contact "admin@obiora.com".
 
-###Using the plugin
+### Using the plugin
 To use the uptime monitor plugin add the key/value pair to the monitor
 ```ruby
 plugin: "uptime_monitor"
 ```
 
-###Browsers
+### Browsers
 A browser is specified, by adding a browser key/value pair to the monitor
 ```ruby
 browser: "firefox"
@@ -79,14 +81,14 @@ To run Chrome browser as headless
 browser: "chrome headless"
 ```
 
-###Validations
+### Validations
 To verify that a html element exists on the web page, a validation needs to be added to the monitor. Validations are specified with the exists? key/value pair which takes a string of html elements as it's value. It verifies that the html elements in the array exists on the current web page.
 ```ruby
 exists?: "h1 div"
 ```
 The above example will verify that a h1 and a div exists on the page.
 
-####HTML Elements
+#### HTML Elements
 The simplest way to specify a html element is using the element name.
 ```ruby
 exists?: "h1 div a img span"
@@ -109,7 +111,7 @@ div.where(id:"test", class: "test-section")
 ```
 Specifes a div with id="test" and class="test-section".
 
-####Multiple validations
+#### Multiple validations
 Multiple validations can be added to a monitor, see below:
 ```ruby
 validations = <<-eos
@@ -134,7 +136,7 @@ ragios.create(monitor)
 In the above example the string variable *validations* contains validations that need to be performed when the monitor runs. During execution, the monitor will visit the website and verify that all the html elements specified in the validations exists on the page, if any of them doesn't exist, a notification of the failure will be sent out.
 
 
-####Standard attributes
+#### Standard attributes
 
 Only standard attributes for an element can be included in the above format *div.where(id: "test")*, for example a div has the following standard attributes id, class, lang, dir, title, align, onclick, ondblclick, onmousedown, onmouseup, onmouseover, onmousemove, onmouseout, onkeypress, onkeydown, onkeyup. So *div.where(class: "anything")* will work.
 
@@ -149,7 +151,7 @@ div.where(data-brand: "toyota")
 will give an error because "data-brand" is not a standard attibute for div, to specify elements by data or custom attributes use css selectors, see below.
 
 
-####Using CSS Selectors
+#### Using CSS Selectors
 HTML elements can also be specified with css selectors.
 ```ruby
 element.where(css: "#rss-link")
@@ -161,7 +163,7 @@ To specify an element by data attributes
 element.where(css: "[data-brand='toyota']")
 ```
 
-####Helpers for HTML elements
+#### Helpers for HTML elements
 Helpers are available to make some elements easier to reason about:
 
 #####Links
@@ -181,7 +183,7 @@ link.where(text: "Click Here")
 link.where(href: "https://www.southmunn.com/aboutus")
 ```
 
-#####Buttons
+##### Buttons
 ```ruby
 button.where(id: "searchsubmit")
 ```
@@ -196,16 +198,16 @@ More readable than the input tag
 input.where(id: "search")
 ```
 
-#####Checkboxes
+##### Checkboxes
 ```ruby
 checkbox.where(value: "Butter")
 ```
-#####Radio Buttons
+##### Radio Buttons
 ```ruby
 radio.where(name: "group1", value: "Milk")
 ```
 
-#####Drop Down menus
+##### Drop Down menus
 ```html
 <select name="mydropdown">
 <option value="Milk">Fresh Milk</option>
@@ -228,7 +230,7 @@ Options of the drop-down menu can be specified using option
 option.where(value: "Milk")
 ```
 
-####Text Validations
+#### Text Validations
 A text validation is used to verify that the text content of a html element hasn't changed. For example,
 ```ruby
 exists?: 'title.with_text("Welcome to my site")'
@@ -245,14 +247,14 @@ exists?: 'div.where(class: "box_content").includes_text("SouthMunn is a Website"
 ```
 Text validations can be used on html elements that can contain text like title, div, span, h1, h2 etc.
 
-####Actions
+#### Actions
 Validations can also include actions. The actions are performed on the html element after it is verfied that the element exists. Example to set a text field's value
 ```ruby
 exists?: 'text_field.where(id: "username").set("admin")'
 ```
 The above example is an action that will set the text field's value to the string "admin".
 
-#####Actions on html elements
+##### Actions on html elements
 Common actions performed on elements are set, select and click.
 
 For example to set value for a textfield or textarea.
@@ -278,14 +280,14 @@ checkbox.where(name: "checkbox").click
 link.where(text: "Click Here").click
 button.where(id: "submit").click
 ```
-####Waiting
+#### Waiting
 For webpages that use a lot of AJAX, it's possible to wait until an element exists, by using the wait_for keyword. This keyword takes an element as value. It is a special type of validation, it will wait for 30 seconds for the provided element to exist, if the element doesn't exist in 30 seconds the validation fails.
 ```ruby
 wait_for div.where(id: "open-section")
 ```
 The above example will wait 30 seconds until the div exists, if it doesn't exist after 30 seconds the validation will fail.
 
-####Multiple validations and actions
+#### Multiple validations and actions
 ```ruby
 validations = <<-eos
   text_field.where(id: "username").set("admin")
@@ -301,7 +303,7 @@ When actions like clicking a link, changes the current page, the following valid
 A combination of multiple validations and actions form the basis for performing transactions.
 
 
-####Performing Transactions
+#### Performing Transactions
 Transactions are achieved by a combination of multiple validations and actions.
 
 Example, to monitor the keyword search feature on my blog, notice the validations in the exists? key's value:
@@ -393,7 +395,7 @@ monitor = {
 ragios.create(monitor)
 ```
 
-####Testing the validations outside Ragios
+#### Testing the validations outside Ragios
 Sometimes it's useful to run validations outside Ragios to verify that the validations are syntactically correct and don't raise any exceptions. This is best done by running the uptime_monitor plugin as a Plain Old Ruby Object.
 ```ruby
 require 'uptime_monitor'
@@ -438,7 +440,7 @@ u.test_result
 In the above example the *test_command?* method runs the validations and returns true when all validations passes, returns false when any of the validation fails. *test_result* is a hash that contains the result of the tests ran by *test_command?*.
 
 
-####Testing individual validations
+#### Testing individual validations
 It can be very useful to test validations/actions individually before adding them to Ragios. This can be done by running plugin's browser directly.
 ```ruby
 require 'uptime_monitor'
@@ -463,7 +465,7 @@ browser.exists? 'title.includes_text("ruby")'
 it checks if the title tag on the current webpage includes the text 'ruby'.
 
 
-##Screenshots
+## Screenshots
 The uptime_monitor can be configured to take a screenshot of the webpage when a test fails. This screenshot is uploaded to Amazon s3 and its url is included in the test_result. So the website admin can see what the site looks like when transaction failed.
 
 This feature is disable by default, to enable it set following environment variable.
@@ -520,7 +522,7 @@ ragios.create(monitor)
 ```
 This will diable screenshots only for this monitor, no screenshots will be taken when its test fails.
 
-##License:
+## License:
 MIT License.
 
 Copyright (c) 2014 Obi Akubue, obi-akubue.org

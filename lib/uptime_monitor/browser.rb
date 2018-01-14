@@ -1,7 +1,7 @@
 module Hercules
   module UptimeMonitor
     class Browser
-      def initialize(url, browser_name = "firefox", is_headless = false)
+      def initialize(url, browser_name = :firefox, is_headless = false)
         start_headless if is_headless
         goto(url,browser_name)
       end
@@ -119,8 +119,9 @@ module Hercules
     private
       def goto(url, browser_name)
         client = Selenium::WebDriver::Remote::Http::Default.new
-        client.timeout = 180 # seconds – default is 60
-        @browser = Watir::Browser.new browser_name, http_client: client
+        client.read_timeout = 180 # seconds – default is 60
+        #currently set a permanent grid for testing
+        @browser = Watir::Browser.new browser_name, http_client: client, url: "http://hub:4444/wd/hub"
         @browser.goto url
       end
       def start_headless
