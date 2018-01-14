@@ -1,0 +1,18 @@
+version: '3'
+services:
+  uptime_monitor:
+    build: .
+    volumes:
+      - .:/usr/src/uptime_monitor
+    depends_on:
+      - firefox
+    environment:
+      AWS_ACCESS_KEY_ID:
+      AWS_SECRET_ACCESS_KEY:
+      RAGIOS_HERCULES_S3_DIR:
+      RAGIOS_HERCULES_ENABLE_SCREENSHOTS:
+    entrypoint: bundle exec rake repl
+
+  firefox:
+    image: mipmip/watir-xvfb
+
