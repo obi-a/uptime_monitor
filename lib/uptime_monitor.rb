@@ -1,4 +1,4 @@
-#require 'headless'
+# require 'headless'
 require 'watir'
 require 'watir-webdriver-performance'
 require 'ostruct'

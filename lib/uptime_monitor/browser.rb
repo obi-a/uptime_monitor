@@ -121,7 +121,10 @@ module Hercules
         client = Selenium::WebDriver::Remote::Http::Default.new
         client.read_timeout = 180 # seconds – default is 60
         #currently set a permanent grid for testing
-        @browser = Watir::Browser.new browser_name, http_client: client, url: "http://hub:4444/wd/hub"
+        options = {http_client: client}
+        options[:url] = "http://#{ENV['HUB_HOST']}:4444/wd/hub" if ENV['HUB_HOST']
+
+        @browser = Watir::Browser.new browser_name, options
         @browser.goto url
       end
       def start_headless

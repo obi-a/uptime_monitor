@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Hercules::UptimeMonitor::Browser do
   before(:all) do
     url= "http://obi-akubue.org"
-    headless = true
+    headless = false
     browser_name = "firefox"
     @browser = Hercules::UptimeMonitor::Browser.new(url, browser_name, headless)
   end
@@ -32,7 +32,7 @@ describe Hercules::UptimeMonitor::Browser do
   it "cannot apply an action on element that can't respond to it " do
     element = @browser.get_element({button: {id: "searchsubmit"}})
     element.exists?.should ==  true
-    expect{@browser.apply_action?(element, {set: "github"})}.to raise_error
+    expect{@browser.apply_action?(element, {set: "github"})}.to raise_error(/undefined method `set'/)
   end
   it "cannot apply action in wrong form" do
     element = @browser.get_element({text_field: {id: "s"}})
@@ -119,7 +119,7 @@ describe Hercules::UptimeMonitor::Browser do
   end
   it "cannot check an element exists using unusual attributes unless its a css query" do
     element = @browser.get_element({div: {unusual_attribute: "something_else", id: "something_else"}})
-    expect{element.exists?}.to raise_error(Watir::Exception::MissingWayOfFindingObjectException)
+    element.exists?.should == false
   end
   it "can check an element exists using unusual attributes with css query" do
     element = @browser.get_element({element: {css: '[data-name="message"]'}})
@@ -156,7 +156,7 @@ describe Hercules::UptimeMonitor::Browser do
   end
   it "cannot check if page_element_exists if first is in wrong form" do
    element = [{div: {unusual_attribute: "something_else", id: "something_else"}}]
-   expect{@browser.page_element_exists?(element)}.to raise_error(Hercules::UptimeMonitor::UnknownPageElement)
+   @browser.page_element_exists?(element).should == false
   end
   it "can check if page_element_exists" do
     @browser.exists?([{text_field: {id: "s"}}]).should == true

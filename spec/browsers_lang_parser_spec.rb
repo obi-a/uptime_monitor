@@ -10,7 +10,7 @@ describe Hercules::UptimeMonitor::BrowsersLangParser do
     @parser.parse("_,0any_non_whitespace").should == {browser: "_,0any_non_whitespace", headless: false}
   end
   it "raises an exception for invalid browser name" do
-    expect { @parser.parse("\n") }.to raise_error
+    expect { @parser.parse("\n") }.to raise_error(/no implicit conversion of nil into String/)
     expect { @parser.parse(" ") }.to raise_error(Hercules::UptimeMonitor::ParserSyntaxError)
   end
   it "parses valid specification for headless browser operation" do

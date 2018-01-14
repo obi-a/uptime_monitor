@@ -36,7 +36,7 @@ describe Ragios::Plugin::UptimeMonitor do
   it "runs a test that passes" do
     monitor = {
       url: "http://obi-akubue.org",
-      browser: "firefox headless",
+      browser: "firefox",
       exists?: "title"
     }
     @uptime_monitor.init(monitor)
@@ -50,7 +50,7 @@ describe Ragios::Plugin::UptimeMonitor do
   it "runs a test that fails" do
     monitor = {
       url: "http://obi-akubue.org",
-      browser: "firefox headless",
+      browser: "firefox",
       exists?: 'title.with_text("dont_exist")'
     }
     @uptime_monitor.init(monitor)
@@ -65,7 +65,7 @@ describe Ragios::Plugin::UptimeMonitor do
   it "can disable screenshot capture when a test fails for individual monitors" do
     monitor = {
       url: "http://obi-akubue.org",
-      browser: "firefox headless",
+      browser: "firefox",
       exists?: 'title.with_text("dont_exist")',
       disable_screenshots: true
     }
