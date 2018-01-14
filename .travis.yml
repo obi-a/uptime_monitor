@@ -1,6 +1,17 @@
-language: ruby
-rvm:
-  - 2.3.0
-  - 2.2.3
+env:
+  - DOCKER_COMPOSE_VERSION=1.16.1
 
-script: bundle exec rspec -fd spec
+before_install:
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+
+before_script:
+  - docker-compose build
+
+script:
+  - docker-compose run unit_tests
+
+after_script:
+  - docker-compose down

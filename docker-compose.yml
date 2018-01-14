@@ -47,6 +47,6 @@ services:
       AWS_ACCESS_KEY_ID:
       AWS_SECRET_ACCESS_KEY:
       RAGIOS_HERCULES_S3_DIR:
-      RAGIOS_HERCULES_ENABLE_SCREENSHOTS:
+      RAGIOS_HERCULES_ENABLE_SCREENSHOTS: "false"
       HUB_HOST: hub
     entrypoint: bundle exec rspec -fd spec
