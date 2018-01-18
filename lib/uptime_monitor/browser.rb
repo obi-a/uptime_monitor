@@ -122,7 +122,7 @@ module Hercules
         client.read_timeout = 180 # seconds – default is 60
         #currently set a permanent grid for testing
         options = {http_client: client}
-        options[:url] = "http://#{ENV['HUB_HOST']}:4444/wd/hub" if ENV['HUB_HOST']
+        options[:url] = "http://#{ENV['BROWSER']}:5555/wd/hub" if ENV['BROWSER']
 
         @browser = Watir::Browser.new browser_name, options
         @browser.goto url

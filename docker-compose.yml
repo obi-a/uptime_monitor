@@ -28,13 +28,13 @@ services:
     volumes:
       - .:/usr/src/uptime_monitor
     links:
-      - hub:hub
+      - firefox:firefox
     environment:
       AWS_ACCESS_KEY_ID:
       AWS_SECRET_ACCESS_KEY:
       RAGIOS_HERCULES_S3_DIR:
       RAGIOS_HERCULES_ENABLE_SCREENSHOTS:
-      HUB_HOST: hub
+      BROWSER: firefox
     entrypoint: bundle exec rake repl
 
   unit_tests:
@@ -42,11 +42,11 @@ services:
     volumes:
       - .:/usr/src/uptime_monitor
     links:
-      - hub:hub
+      - firefox:firefox
     environment:
       AWS_ACCESS_KEY_ID:
       AWS_SECRET_ACCESS_KEY:
       RAGIOS_HERCULES_S3_DIR:
-      RAGIOS_HERCULES_ENABLE_SCREENSHOTS: "false"
-      HUB_HOST: hub
+      RAGIOS_HERCULES_ENABLE_SCREENSHOTS:
+      BROWSER: firefox
     entrypoint: bundle exec rspec -fd spec
