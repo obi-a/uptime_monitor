@@ -29,7 +29,7 @@ def clear_screenshots_cache!
   Dir.glob("*.*").each { |filename| File.delete(filename) if file_age(filename) > 1 }
 end
 
-if RAGIOS_HERCULES_ENABLE_SCREENSHOTS
+if RAGIOS_HERCULES_ENABLE_SCREENSHOTS && ENV['AMAZON_ACCESS_KEY_ID'] && ENV['AMAZON_SECRET_ACCESS_KEY']
   setup_screenshot_dir
   AWS::S3::Base.establish_connection!(
     :access_key_id     => ENV['AMAZON_ACCESS_KEY_ID'],
