@@ -484,10 +484,10 @@ This feature is disable by default, to enable it set following environment varia
 ```
 RAGIOS_HERCULES_ENABLE_SCREENSHOTS=true
 ```
-Also set environment variables for the Amazon s3 account you want to use for storing the screenshots,
+Also set environment variables for the Amazon s3 account you want to use for storing the screenshots, add the AWS Access Key ID and AWS SECRET ACCESS KEY for the AWS account with S3 access.
 ```
-AWS_ACCESS_KEY_ID=xxxxxxx
-AWS_SECRET_ACCESS_KEY=xxxxxx
+S3_AWS_ACCESS_KEY_ID=xxxxxxx
+S3_AWS_SECRET_ACCESS_KEY=xxxxxx
 RAGIOS_HERCULES_S3_DIR=xxxxxx
 ```
 The above env vars are for the Amazon AWS access key, AWS secret key and s3 directory/bucket you want to use for storage. First create this s3 bucket manually.

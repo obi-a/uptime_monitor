@@ -30,8 +30,8 @@ services:
     links:
       - firefox:firefox
     environment:
-      AWS_ACCESS_KEY_ID:
-      AWS_SECRET_ACCESS_KEY:
+      S3_AWS_ACCESS_KEY_ID:
+      S3_AWS_SECRET_ACCESS_KEY:
       RAGIOS_HERCULES_S3_DIR:
       RAGIOS_HERCULES_ENABLE_SCREENSHOTS:
       BROWSER: firefox
@@ -44,8 +44,8 @@ services:
     links:
       - firefox:firefox
     environment:
-      AWS_ACCESS_KEY_ID:
-      AWS_SECRET_ACCESS_KEY:
+      S3_AWS_ACCESS_KEY_ID:
+      S3_AWS_SECRET_ACCESS_KEY:
       RAGIOS_HERCULES_S3_DIR:
       RAGIOS_HERCULES_ENABLE_SCREENSHOTS:
       BROWSER: firefox

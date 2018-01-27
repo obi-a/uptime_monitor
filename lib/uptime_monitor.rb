@@ -33,8 +33,8 @@ end
 if RAGIOS_HERCULES_ENABLE_SCREENSHOTS
   setup_screenshot_dir
   AWS::S3::Base.establish_connection!(
-    :access_key_id     => ENV['AWS_ACCESS_KEY_ID'],
-    :secret_access_key => ENV['AWS_SECRET_ACCESS_KEY']
+    :access_key_id     => ENV['S3_AWS_ACCESS_KEY_ID'],
+    :secret_access_key => ENV['S3_AWS_SECRET_ACCESS_KEY']
   )
   clear_screenshots_cache!
 end
