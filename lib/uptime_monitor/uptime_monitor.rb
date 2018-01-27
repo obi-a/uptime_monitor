@@ -1,5 +1,5 @@
 module Ragios
-  module Plugin
+  module Plugins
     class UptimeMonitor
       attr_reader :monitor
       attr_reader :test_result

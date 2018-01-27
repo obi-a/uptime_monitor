@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Ragios::Plugin::UptimeMonitor do
+describe Ragios::Plugins::UptimeMonitor do
   before(:each) do
-    @uptime_monitor = Ragios::Plugin::UptimeMonitor.new
+    @uptime_monitor = Ragios::Plugins::UptimeMonitor.new
   end
   it "sets the correct test result for success" do
     @uptime_monitor.result!("page_element", state = true)
