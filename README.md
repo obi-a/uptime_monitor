@@ -1,10 +1,9 @@
 uptime_monitor (Hercules)
 ==========================
-[![Build Status](https://travis-ci.org/obi-a/uptime_monitor.png?branch=master)](https://travis-ci.org/obi-a/uptime_monitor)
 [![Gem Version](https://badge.fury.io/rb/uptime_monitor.svg)](http://badge.fury.io/rb/uptime_monitor)
 
 
-Uptime_monitor is a [ragios](https://github.com/obi-a/ragios) plugin that uses a real web browser to perform actions on a website to ensure that features of the site are still working correctly. It can check elements of a webpage to ensure they still exist and it can also perform actions like a website login to ensure that the process still works correctly. When uptime_monitor detects a problem with the website, Uptime_monitor can take a screenshot of the web page it sees, and it can also record a video of the actions it performed on the website.
+Uptime_monitor is a [ragios](https://github.com/obi-a/ragios) plugin that uses a real web browser to perform actions on a website to ensure that features of the site are still working correctly. It can check elements of a webpage to ensure they still exist and it can also perform actions like a website login to ensure that the process still works correctly. When uptime_monitor detects a problem with the website, Uptime_monitor can take a screenshot of the web page it sees, and it can also record a video of the actions it performed on the website. The video feature is not yet implemented.
 
 ## Requirements
 Ruby: At least Ruby 2.4.1 or higher is recommended
@@ -374,13 +373,13 @@ monitor = {
   via: "email_notifier",
   plugin: "uptime_monitor",
   exists?: login_process,
-  browser: "firefox headless"
+  browser: "firefox"
 }
 
 ragios.create(monitor)
 ```
 
-#### Running Uptime Monitor outside Ragios with Docker Compose
+## Running Uptime Monitor outside Ragios with Docker Compose
 
 First clone the uptime_monitor Repo on github.
 
@@ -406,7 +405,7 @@ docker-compose run  --rm uptime_monitor
 This will give you access to the entire uptime_monitor and all its objects loaded into PRY console. It will also run Selenium Grid and firefox in separate docker containers already connected to the uptime_monitor.
 
 
-#### Testing the validations outside Ragios
+## Testing the validations outside Ragios
 Sometimes it's useful to run validations outside Ragios to verify that the validations are syntactically correct and don't raise any exceptions. This is best done by running the uptime_monitor plugin as a Plain Old Ruby Object.
 
 First load uptime_monitor into PRY console:
@@ -456,7 +455,7 @@ u.test_result
 In the above example the *test_command?* method runs the validations and returns true when all validations passes, returns false when any of the validation fails. *test_result* is a hash that contains the result of the tests ran by *test_command?*.
 
 
-#### Testing individual validations
+## Testing individual validations
 It can be very useful to test validations/actions individually before adding them to Ragios. This can be done by running plugin's browser directly.
 ```ruby
 url= "http://obi-akubue.org"
@@ -524,7 +523,7 @@ example:
 ```ruby
 monitor = {
   url: "http://obi-akubue.org",
-  browser: "firefox headless",
+  browser: "firefox",
   exists?: "title",
   disable_screenshots: true
 }
@@ -541,4 +540,4 @@ docker-compose run  --rm unit_tests
 ## License:
 MIT License.
 
-Copyright (c) 2014 Obi Akubue, obi-akubue.org
+Copyright (c) 2017 Obi Akubue, obi-akubue.org

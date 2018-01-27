@@ -120,7 +120,7 @@ module Hercules
       def goto(url, browser_name)
         client = Selenium::WebDriver::Remote::Http::Default.new
         client.read_timeout = 180 # seconds – default is 60
-        #currently set a permanent grid for testing
+
         options = {http_client: client}
         options[:url] = "http://#{ENV['BROWSER']}:5555/wd/hub" if ENV['BROWSER']
 

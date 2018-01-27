@@ -1,3 +1,4 @@
+# Headless is no longer needed will be removed later
 # require 'headless'
 require 'watir'
 require 'watir-webdriver-performance'
