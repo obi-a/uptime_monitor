@@ -25,7 +25,6 @@ GEM
       mime-types (>= 1.16, < 3.0)
       oauth2 (~> 1.0)
     hashie (3.5.7)
-    headless (1.0.2)
     highline (1.7.10)
     jeweler (2.3.7)
       builder
@@ -98,7 +97,6 @@ PLATFORMS
 DEPENDENCIES
   aws-s3
   bundler (~> 1.0)
-  headless (~> 1.0.2)
   jeweler (~> 2.3.7)
   pry
   rdoc (~> 3.12)
