@@ -379,7 +379,9 @@ monitor = {
 ragios.create(monitor)
 ```
 
-## Running Uptime Monitor outside Ragios with Docker Compose
+## Using Uptime Monitor without Ragios
+
+### Running Uptime Monitor outside Ragios with Docker Compose
 
 First clone the uptime_monitor Repo on github.
 
@@ -405,7 +407,7 @@ docker-compose run  --rm uptime_monitor
 This will give you access to the entire uptime_monitor and all its objects loaded into PRY console. It will also run Selenium Grid and firefox in separate docker containers already connected to the uptime_monitor.
 
 
-## Testing the validations outside Ragios
+### Testing the validations outside Ragios
 Sometimes it's useful to run validations outside Ragios to verify that the validations are syntactically correct and don't raise any exceptions. This is best done by running the uptime_monitor plugin as a Plain Old Ruby Object.
 
 First load uptime_monitor into PRY console:
@@ -455,7 +457,7 @@ u.test_result
 In the above example the *test_command?* method runs the validations and returns true when all validations passes, returns false when any of the validation fails. *test_result* is a hash that contains the result of the tests ran by *test_command?*.
 
 
-## Testing individual validations
+### Testing individual validations
 It can be very useful to test validations/actions individually before adding them to Ragios. This can be done by running plugin's browser directly.
 ```ruby
 url= "http://obi-akubue.org"
@@ -517,9 +519,9 @@ u.test_result
 ```
 Notice that *test_result* includes a url to the screenshot  of the webpage when the test failed. This test result is also included in the notifications sent to site admin by Ragios when a test fails. So this way the admin can see exactly what webpage looked like when the transaction failed.
 
-## Disable screenshots on individual monitors
-While using Ragios, to disable screenshots on a particular monitor add the key/value pair ```disable_screenshots: true```
-example:
+### Disable screenshots on individual monitors
+To disable screenshots on a particular monitor in Ragios add the key/value pair ```disable_screenshots: true``` to the monitor.
+For example:
 ```ruby
 monitor = {
   url: "http://obi-akubue.org",
