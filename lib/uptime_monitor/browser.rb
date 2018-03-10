@@ -116,13 +116,18 @@ module Hercules
         uploader = Hercules::UptimeMonitor::ScreenShotUploader.new
         uploader.store(file)
       end
+
     private
+
       def goto(url, browser_name)
         client = Selenium::WebDriver::Remote::Http::Default.new
         client.read_timeout = 180 # seconds – default is 60
 
         options = {http_client: client}
-        options[:url] = "http://#{ENV['BROWSER']}:5555/wd/hub" if ENV['BROWSER']
+
+        if ENV['HUB_HOST'] && ENV['HUB_PORT']
+          options[:url] = "http://#{ENV['HUB_HOST']}:4444/wd/hub"
+        end
 
         @browser = Watir::Browser.new browser_name, options
         @browser.goto url

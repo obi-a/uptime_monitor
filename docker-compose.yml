@@ -20,6 +20,8 @@ services:
 
   hub:
     image: selenium/hub:3.8.1-erbium
+    environment:
+      GRID_BROWSER_TIMEOUT: 60
     ports:
       - "4444:4444"
 
@@ -27,26 +29,33 @@ services:
     build: .
     volumes:
       - .:/usr/src/uptime_monitor
+    depends_on:
+      - firefox
+      - chrome
     links:
-      - firefox:firefox
+      - hub:hub
     environment:
       S3_AWS_ACCESS_KEY_ID:
       S3_AWS_SECRET_ACCESS_KEY:
       RAGIOS_HERCULES_S3_DIR:
       RAGIOS_HERCULES_ENABLE_SCREENSHOTS:
-      BROWSER: firefox
+      HUB_HOST: hub
+      HUB_PORT: 4444
     entrypoint: bundle exec rake repl
 
   unit_tests:
     build: .
     volumes:
       - .:/usr/src/uptime_monitor
+    depends_on:
+      - firefox
     links:
-      - firefox:firefox
+      - hub:hub
     environment:
       S3_AWS_ACCESS_KEY_ID:
       S3_AWS_SECRET_ACCESS_KEY:
       RAGIOS_HERCULES_S3_DIR:
       RAGIOS_HERCULES_ENABLE_SCREENSHOTS:
-      BROWSER: firefox
+      HUB_HOST: hub
+      HUB_PORT: 4444
     entrypoint: bundle exec rspec -fd spec
