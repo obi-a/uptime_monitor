@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0".freeze) if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib".freeze]
   s.authors = ["obi-a".freeze]
-  s.date = "2018-10-06"
+  s.date = "2018-10-07"
   s.description = "A Ragios plugin that uses a real web browser to monitor transactions on a website for availability".freeze
   s.email = "obioraakubue@yahoo.com".freeze
   s.extra_rdoc_files = [

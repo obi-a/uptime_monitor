@@ -5,6 +5,7 @@ gem 'watir', "~> 6.14.0"
 gem 'watir-webdriver-performance', "~> 0.2.4"
 gem "aws-s3"
 gem "treetop"
+gem "rack", ">= 2.0.6"
 
 group :development do
   gem "rspec"
